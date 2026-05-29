@@ -1,0 +1,14 @@
+Fix live date rendering and France mandate timeline
+
+- France: change status from mandatory to upcoming; update effectiveDate
+  to 2026-09-01; reset enforcement fields; correct mandatePhase to
+  phased rollout description; replace 2025 B2B enforcement milestones
+  with accurate 3-phase timeline (Sep 2026 receiving, Sep 2026/Sep 2027
+  issuing); update aiSummary to remove all 2025 enforcement claims;
+  fix Chorus Pro checklist item (remove January 2025 B2B claim)
+- France homepage banner: now shows "1 September 2026" (correct)
+- United Kingdom: DeadlineBanner already shows "Date to be confirmed"
+  (null date guard was already in place; no change needed)
+- Clearing house provider: update to accurately state that Italy SDI
+  is mandatory now while France B2B PDP requirement begins Sep 2026;
+  fix pros/cons to reflect accurate status for both countries

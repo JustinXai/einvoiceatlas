@@ -145,9 +145,9 @@ export const providerRoutes: ProviderRoute[] = [
   {
     slug: 'clearing-house',
     name: 'Clearing House / PDP Route',
-    shortDescription: 'Route invoices through a certified intermediary (PDPs in France, SDI in Italy).',
+    shortDescription: 'Route invoices through a certified intermediary (SDI in Italy; PDP-based model for France B2B rollout from 2026).',
     description:
-      'In countries like France and Italy, all B2B invoices must pass through a certified intermediary called a PDP (Plateforme de Dématérialisation Partenaires) before reaching the buyer. PDPs validate, log, and forward invoices. This is a mandatory route in France for B2B mandates.',
+      'In Italy, all B2B invoices must pass through a certified intermediary — SDI (Sistema di Interscambio) — which validates, logs, and forwards invoices. In France, a similar platform-based model is being introduced under the phased B2B mandate beginning September 2026, requiring transmission through registered approved service providers (PDP — Plateforme de Dématérialisation Partenaires).',
     howItWorks:
       '1. Generate invoice in the required format. 2. Send to your chosen PDP via API. 3. PDP validates format, VAT numbers, and compliance. 4. PDP routes to buyer (who may also use a PDP or the government clearing system). 5. PDP provides a validation receipt. 6. PDP reports to tax authorities.',
     requirements: [
@@ -157,13 +157,13 @@ export const providerRoutes: ProviderRoute[] = [
       { category: 'operational', item: 'Ensure buyer can receive via PDP or government system', isMandatory: true },
     ],
     pros: [
-      'Mandatory for compliance in France and Italy',
+      'Mandatory for compliance in Italy; required for France B2B from September 2026',
       'PDPs provide format validation and compliance checks',
       'PDPs handle tax authority reporting',
       'Reduces bilateral integration requirements',
     ],
     cons: [
-      'Mandatory route — no alternatives in France for B2B',
+      'Mandatory route in Italy; becomes mandatory for France B2B from September 2026 — no alternatives for in-scope companies',
       'PDP subscription costs',
       'Buyer and supplier must both be on compatible PDPs',
       'Complexity increases with cross-border transactions',

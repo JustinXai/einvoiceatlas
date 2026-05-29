@@ -26,14 +26,15 @@ export const countries: Country[] = [
     isoCode: 'FR',
     region: 'Europe',
     subRegion: 'EU',
-    status: 'mandatory',
-    effectiveDate: '2020-01-01',
-    mandatePhase: 'Full mandate — B2B and B2G',
-    enforcementDate: '2023-07-01',
-    enforcementStatus: 'strict',
+    status: 'upcoming',
+    effectiveDate: '2026-09-01',
+    mandatePhase: 'Phased rollout — B2G active since 2020; B2B receiving from Sep 2026; B2B issuing from Sep 2026 / Sep 2027',
+    enforcementDate: null,
+    enforcementStatus: 'upcoming',
     affectedParties: [
-      'All businesses issuing or receiving invoices',
-      'B2B and B2G',
+      'All B2G suppliers to French government — mandatory since 2020',
+      'B2B receiving — all businesses receiving invoices in France, mandatory from 1 September 2026',
+      'B2B issuing — large and mid-sized companies from 1 September 2026; SMEs and micro-companies from 1 September 2027',
       'Including foreign companies issuing to French entities',
     ],
     turnoverThreshold: null,
@@ -47,7 +48,7 @@ export const countries: Country[] = [
         category: 'legal',
         title: 'Register on Chorus Pro',
         description:
-          'Create an account on the French government e-invoicing portal (Chorus Pro). Required for all B2G invoices and mandatory for B2B from January 2025. Source: Chorus Pro is operated by the Direction Générale des Finances Publiques (DGFiP).',
+          'Create an account on the French government e-invoicing portal (Chorus Pro). Required for all B2G invoices and mandatory for B2B under the phased rollout beginning September 2026. Source: Chorus Pro is operated by the Direction Générale des Finances Publiques (DGFiP).',
         isCritical: true,
         externalResource: 'https://chorus-pro.gouv.fr/',
       },
@@ -142,21 +143,30 @@ export const countries: Country[] = [
     lastReviewed: '2026-05-15',
     upcomingMilestones: [
       {
-        phase: 'Full B2B mandate',
-        date: '2025-01-01',
-        description: 'All B2B invoices must be transmitted via certified PDP',
+        phase: 'B2B receiving obligation',
+        date: '2026-09-01',
+        description:
+          'All businesses receiving invoices in France must be able to receive e-invoices in Factur-X or UBL 2.1 format.',
         isMandatory: true,
       },
       {
-        phase: 'E-reporting (VAT)',
-        date: '2024-01-01',
-        description: 'Continuous transaction controls (CTC) VAT reporting operational',
+        phase: 'B2B issuing — large and mid-sized companies',
+        date: '2026-09-01',
+        description:
+          'Large companies and mid-sized enterprises (entreprises de taille intermédiaire) must issue e-invoices under the B2B mandate.',
+        isMandatory: true,
+      },
+      {
+        phase: 'B2B issuing — SMEs and micro-companies',
+        date: '2027-09-01',
+        description:
+          'Small and medium-sized enterprises and micro-companies join the B2B e-invoicing mandate.',
         isMandatory: true,
       },
     ],
     // --- Display ---
     aiSummary:
-      'France operates one of the most comprehensive mandatory e-invoicing systems in the EU. The B2G mandate has been in effect since 2020, and the B2B mandate reached full enforcement in 2025. Businesses must use either Factur-X (a PDF with embedded XML, widely preferred for its readability) or UBL 2.1 (pure XML). Invoices must be transmitted via the Chorus Pro portal or the PEPPOL network. The government has implemented a strict clearing house model requiring all B2B invoices to pass through a certified intermediary (PDP — Plateforme de Dématérialisation Partenaires) before reaching the buyer.',
+      'France is rolling out mandatory electronic invoicing and e-reporting in phased stages. B2G mandatory e-invoicing through Chorus Pro has been in effect since 2020. The B2B e-invoicing mandate is being introduced progressively: the receiving obligation begins for all companies on 1 September 2026, and the issuing obligation begins on 1 September 2026 for large and mid-sized companies, extending to SMEs and micro-companies on 1 September 2027. Businesses must use either Factur-X (a PDF with embedded XML, widely preferred for its readability) or UBL 2.1 (pure XML). Invoices are transmitted via the Chorus Pro portal, the PEPPOL network, or through registered approved service providers (PDP). The platform requirements and scope of the clearing model continue to be clarified by DGFiP.',
   },
 
   // ============================================================
