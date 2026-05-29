@@ -1,0 +1,164 @@
+---
+// Footer — EInvoiceAtlas site footer
+
+export interface Props {
+  columns: { heading: string; links: { label: string; href: string }[] }[];
+  copyright: string;
+  disclaimer: string;
+}
+
+const { columns, copyright, disclaimer } = Astro.props;
+---
+
+<footer class="site-footer">
+  <div class="container-site footer-inner">
+    <!-- Brand column -->
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <rect width="28" height="28" rx="6" fill="#92400E"/>
+          <rect x="6" y="8" width="16" height="2" rx="1" fill="#FAF8F4"/>
+          <rect x="6" y="13" width="12" height="2" rx="1" fill="#FAF8F4"/>
+          <rect x="6" y="18" width="14" height="2" rx="1" fill="#FAF8F4"/>
+        </svg>
+        <span>EInvoiceAtlas</span>
+      </div>
+      <p class="footer-tagline">
+        Independent regulatory intelligence for global e-invoicing compliance.
+      </p>
+    </div>
+
+    <!-- Link columns -->
+    {columns.map((col) => (
+      <div class="footer-col">
+        <h3 class="footer-col-heading">{col.heading}</h3>
+        <ul class="footer-links">
+          {col.links.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+    <div class="container-site footer-bottom-inner">
+      <p class="copyright">{copyright}</p>
+      <p class="disclaimer">{disclaimer}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-slate-900);
+    color: var(--color-slate-300);
+    margin-top: var(--space-20);
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1.5fr repeat(4, 1fr);
+    gap: var(--space-8);
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-12);
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-slate-100);
+  }
+
+  .footer-tagline {
+    font-size: var(--text-sm);
+    color: var(--color-slate-400);
+    line-height: var(--leading-relaxed);
+    max-width: 280px;
+  }
+
+  .footer-col-heading {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-slate-400);
+    margin-bottom: var(--space-4);
+  }
+
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .footer-links a {
+    font-size: var(--text-sm);
+    color: var(--color-slate-300);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .footer-links a:hover {
+    color: var(--color-slate-100);
+  }
+
+  .footer-bottom {
+    border-top: 1px solid var(--color-slate-800);
+  }
+
+  .footer-bottom-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+
+  .copyright {
+    font-size: var(--text-xs);
+    color: var(--color-slate-500);
+  }
+
+  .disclaimer {
+    font-size: var(--text-xs);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    max-width: 800px;
+  }
+
+  @media (max-width: 1024px) {
+    .footer-inner {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-brand {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .footer-brand {
+      grid-column: span 1;
+    }
+  }
+</style>

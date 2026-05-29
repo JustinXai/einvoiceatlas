@@ -1,0 +1,86 @@
+---
+// QuickAnswerBox — Top Q&A block
+export interface Props {
+  items?: { question: string; answer: string }[];
+  title?: string;
+}
+
+const { items = [], title = 'Quick Answers' } = Astro.props;
+---
+
+<div class="quick-answers">
+  <h3 class="qa-title">{title}</h3>
+  <dl class="qa-list">
+    {items.map((item, i) => (
+      <div class="qa-item">
+        <dt class="qa-question">
+          <span class="qa-number">{String(i + 1).padStart(2, '0')}</span>
+          {item.question}
+        </dt>
+        <dd class="qa-answer" set:html={item.answer} />
+      </div>
+    ))}
+  </dl>
+</div>
+
+<style>
+  .quick-answers {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+  }
+
+  .qa-title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-500);
+    margin-bottom: var(--space-5);
+  }
+
+  .qa-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin: 0;
+  }
+
+  .qa-item {
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .qa-item:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .qa-question {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-slate-900);
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .qa-number {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-accent-muted);
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .qa-answer {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+    padding-left: calc(var(--space-3) + 2ch);
+  }
+</style>

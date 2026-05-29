@@ -1,0 +1,544 @@
+---
+// ERP detail page — dynamic route
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import SourcesBox from '../../components/ui/SourcesBox.astro';
+import DisclaimerBox from '../../components/ui/DisclaimerBox.astro';
+import AISummaryBox from '../../components/ui/AISummaryBox.astro';
+import QuickAnswerBox from '../../components/ui/QuickAnswerBox.astro';
+import CountryCard from '../../components/cards/CountryCard.astro';
+import StandardCard from '../../components/cards/StandardCard.astro';
+import ShortlistForm from '../../components/forms/ShortlistForm.astro';
+import ImplementationChecklist from '../../components/blocks/ImplementationChecklist.astro';
+import { erpSystems } from '../../data/erpSystems';
+import { countries } from '../../data/countries';
+import { standards } from '../../data/standards';
+
+export async function getStaticPaths() {
+  return erpSystems.map(erp => ({
+    params: { slug: erp.urlSlug ?? erp.slug },
+    props: { erp },
+  }));
+}
+
+const { erp } = Astro.props;
+
+// Countries where this ERP has implementation relevance
+const relevantCountries = countries.filter(c =>
+  c.relatedErpSystems.includes(erp.slug)
+);
+
+// Related standards
+const relatedStandards = standards.filter(s =>
+  erp.relatedStandards?.includes(s.slug)
+);
+
+// Quick answers
+const quickAnswers = [
+  {
+    q: `Does ${erp.name} have native e-invoicing support?`,
+    a: erp.nativeEInvoiceSupport
+      ? `Yes — ${erp.name} includes native e-invoicing capabilities. See implementation details below.`
+      : `No — ${erp.name} requires a certified add-on or integration module for e-invoicing. See recommended solutions.`,
+  },
+  {
+    q: `What is the implementation complexity for ${erp.name}?`,
+    a: `${erp.name.charAt(0).toUpperCase() + erp.name.slice(1)} is classified as ${erp.configurationComplexity} complexity for mandatory e-invoicing compliance. Configuration effort varies by country and format.`,
+  },
+  {
+    q: `Which e-invoice formats does ${erp.name} support natively?`,
+    a: erp.nativeFormats.length > 0
+      ? `${erp.nativeFormats.map(f => f.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())).join(', ')}. Additional formats may require add-ons.`
+      : `No native format support — a certified module or integration is required.`,
+  },
+  {
+    q: `What countries does ${erp.name} have documented e-invoicing support for?`,
+    a: `${relevantCountries.length} countries have documented ${erp.name} e-invoicing implementation notes.`,
+  },
+];
+
+// Breadcrumb
+const breadcrumbItems = [
+  { label: 'ERP Systems', href: '/erp' },
+  { label: erp.name },
+];
+
+// Meta
+const metaDescription = `${erp.name} e-invoicing: ${erp.nativeEInvoiceSupport ? 'Native support included' : 'Add-on required'}. Configuration complexity: ${erp.configurationComplexity}. Vendor: ${erp.vendor}. Covers ${relevantCountries.length} countries with mandatory e-invoicing.`;
+
+const categoryLabels: Record<string, string> = {
+  enterprise: 'Enterprise',
+  'mid-market': 'Mid-Market',
+  smb: 'SMB',
+  'open-source': 'Open Source',
+};
+
+const complexityColors: Record<string, string> = {
+  low: 'complexity-low',
+  medium: 'complexity-medium',
+  high: 'complexity-high',
+};
+---
+
+<BaseLayout
+  title={`${erp.name} E-Invoicing`}
+  description={metaDescription}
+>
+  <div class="container-content page-erp">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <div class="erp-header">
+      <div class="erp-title-row">
+        <div class="erp-icon">
+          {erp.category === 'enterprise' ? (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          ) : erp.category === 'open-source' ? (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+          ) : (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          )}
+        </div>
+        <div class="erp-titles">
+          <h1 class="erp-h1">{erp.name} E-Invoicing</h1>
+          <div class="erp-title-meta">
+            <span class="vendor-name">{erp.vendor}</span>
+            <span class:list={['category-badge', `cat-${erp.category}`]}>{categoryLabels[erp.category] ?? erp.category}</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="erp-description">{erp.description}</p>
+
+      <div class="erp-meta-grid">
+        <div class="meta-stat">
+          <span class="meta-stat-value">{erp.nativeEInvoiceSupport ? 'Yes' : 'Add-on'}</span>
+          <span class="meta-stat-label">Native support</span>
+        </div>
+        <div class="meta-stat">
+          <span class:list={['meta-stat-value', complexityColors[erp.configurationComplexity] ?? '']}>{erp.configurationComplexity}</span>
+          <span class="meta-stat-label">Complexity</span>
+        </div>
+        <div class="meta-stat">
+          <span class="meta-stat-value">{relevantCountries.length}</span>
+          <span class="meta-stat-label">Countries covered</span>
+        </div>
+        <div class="meta-stat">
+          <span class="meta-stat-value">{erp.nativeFormats.length > 0 ? erp.nativeFormats.length : 'None'}</span>
+          <span class="meta-stat-label">Native formats</span>
+        </div>
+      </div>
+    </div>
+
+    {erp.aiSummary && (
+      <AISummaryBox summary={erp.aiSummary} />
+    )}
+
+    <QuickAnswerBox items={quickAnswers} />
+
+    <div class="erp-content-grid">
+      <div class="erp-main">
+
+        {erp.dataMappingNotes && (
+          <section class="content-section">
+            <h2 class="section-h2">Data Mapping and Field Implications</h2>
+            <p class="section-p">{erp.dataMappingNotes}</p>
+          </section>
+        )}
+
+        {erp.exportConsiderations && (
+          <section class="content-section">
+            <h2 class="section-h2">Export and Transmission Considerations</h2>
+            <p class="section-p">{erp.exportConsiderations}</p>
+          </section>
+        )}
+
+        {erp.archiveConsiderations && (
+          <section class="content-section">
+            <h2 class="section-h2">Archive and Retention</h2>
+            <p class="section-p">{erp.archiveConsiderations}</p>
+          </section>
+        )}
+
+        {erp.certifiedAddons.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Certified Add-ons and Integrations</h2>
+            <p class="section-intro">
+              The following add-ons and integrations have been documented for use with {erp.name}. Verify current certification status with the add-on provider before implementation.
+            </p>
+            <div class="addons-grid">
+              {erp.certifiedAddons.map(addon => (
+                <div class="addon-card">
+                  <span class="addon-name">{addon}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {erp.implementationChecklist.length > 0 && (
+          <ImplementationChecklist
+            items={erp.implementationChecklist}
+            title={`${erp.name} Implementation Checklist`}
+            showCategory={true}
+          />
+        )}
+
+        {(erp as any).commonMistakes && (erp as any).commonMistakes.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Common Mistakes to Avoid</h2>
+            <ul class="mistakes-list">
+              {(erp as any).commonMistakes.map((mistake: string) => (
+                <li class="mistake-item">{mistake}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+
+      <div class="erp-sidebar">
+        <div class="route-cta">
+          <h2 class="section-h2">Need implementation help?</h2>
+          <p class="route-cta-desc">
+            Tell us your ERP, countries of operation, and transaction volume. We'll match you with vetted providers and consultants familiar with {erp.name}.
+          </p>
+          <ShortlistForm compact={true} />
+        </div>
+      </div>
+    </div>
+
+    {relevantCountries.length > 0 && (
+      <section class="related-section">
+        <h2 class="section-h2">Countries Impacted</h2>
+        <div class="related-grid">
+          {relevantCountries.map(country => (
+            <CountryCard
+              slug={country.urlSlug ?? country.slug}
+              name={country.name}
+              isoCode={country.isoCode}
+              status={country.status}
+              effectiveDate={country.effectiveDate}
+              mandatePhase={country.mandatePhase}
+              formats={country.formats}
+              compact={true}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {relatedStandards.length > 0 && (
+      <section class="related-section">
+        <h2 class="section-h2">E-Invoice Standards for {erp.name}</h2>
+        <div class="related-grid">
+          {relatedStandards.map(standard => (
+            <StandardCard
+              slug={standard.urlSlug ?? standard.slug}
+              name={standard.shortName}
+              shortName={standard.shortName}
+              category={standard.category}
+              governingBody={standard.governingBody}
+              countriesUsing={standard.countriesUsing}
+              isPeppolBased={standard.isPeppolBased}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {erp.officialSources.length > 0 && (
+      <SourcesBox sources={erp.officialSources} />
+    )}
+
+    <div class="page-footer-meta">
+      <p class="last-reviewed">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Last reviewed: {erp.lastReviewed}
+      </p>
+    </div>
+
+    <DisclaimerBox />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-erp {
+    padding: var(--space-8) 0 var(--space-20);
+  }
+
+  .erp-header {
+    margin-bottom: var(--space-10);
+  }
+
+  .erp-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .erp-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-accent-light);
+    border-radius: var(--radius-lg);
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .erp-titles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: flex-start;
+  }
+
+  .erp-h1 {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--color-slate-950);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    margin: 0;
+  }
+
+  .erp-title-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .vendor-name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-slate-500);
+  }
+
+  .category-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    background: var(--color-slate-100);
+    color: var(--color-slate-600);
+  }
+
+  .erp-description {
+    font-size: var(--text-base);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0 0 var(--space-6);
+  }
+
+  .erp-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 640px) {
+    .erp-meta-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .meta-stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--color-slate-50);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    align-items: center;
+    text-align: center;
+  }
+
+  .meta-stat-value {
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--color-slate-900);
+    letter-spacing: var(--tracking-tight);
+    text-transform: capitalize;
+  }
+
+  .meta-stat-label {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-slate-500);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+  }
+
+  .complexity-low { color: var(--color-status-active); }
+  .complexity-medium { color: var(--color-status-upcoming); }
+  .complexity-high { color: var(--color-status-warning); }
+
+  .erp-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-10);
+    margin: var(--space-10) 0;
+  }
+
+  @media (max-width: 900px) {
+    .erp-content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .erp-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+
+  .erp-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .content-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .section-h2 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-slate-900);
+    letter-spacing: var(--tracking-tight);
+    margin: 0;
+    padding-bottom: var(--space-3);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .section-p {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+
+  .section-intro {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+
+  .addons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .addon-card {
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .addon-name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-slate-800);
+  }
+
+  .mistakes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .mistake-item {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    padding-left: var(--space-5);
+    position: relative;
+  }
+
+  .mistake-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background: var(--color-status-warning);
+    border-radius: 50%;
+  }
+
+  .route-cta {
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .route-cta-desc {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    margin: 0;
+    line-height: var(--leading-relaxed);
+  }
+
+  .related-section {
+    margin-top: var(--space-10);
+    padding-top: var(--space-10);
+    border-top: 2px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .page-footer-meta {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .last-reviewed {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-slate-400);
+    margin: 0;
+  }
+</style>

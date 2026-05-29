@@ -1,0 +1,141 @@
+---
+// ERP index page
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/ui/SectionHeader.astro';
+import ERPCard from '../../components/cards/ERPCard.astro';
+import { erpSystems } from '../../data/erpSystems';
+---
+
+<BaseLayout
+  title="Browse ERP Systems"
+  description={`E-invoicing implementation guidance for ${erpSystems.length} ERP and accounting systems. Understand how SAP, Oracle, NetSuite, Odoo, and others support mandatory formats.`}
+>
+  <div class="container-content page-erp">
+    <div class="page-hero">
+      <h1 class="page-h1">ERP & Accounting System Impact</h1>
+      <SectionHeader
+        eyebrow="By ERP"
+        title="Find e-invoicing implementation guidance for 5 accounting and ERP systems. Each dossier covers native support, configuration complexity, country coverage, and implementation checklists."
+      />
+    </div>
+
+    <div class="erp-grid">
+      {erpSystems.map(erp => (
+        <ERPCard
+          slug={erp.urlSlug ?? erp.slug}
+          name={erp.name}
+          vendor={erp.vendor}
+          category={erp.category}
+          nativeEInvoiceSupport={erp.nativeEInvoiceSupport}
+          applicableCountries={erp.applicableCountries}
+          configurationComplexity={erp.configurationComplexity}
+        />
+      ))}
+    </div>
+
+    <div class="erp-cta-section">
+      <div class="erp-cta-inner">
+        <div class="erp-cta-text">
+          <h2 class="erp-cta-heading">Need implementation guidance for a specific ERP?</h2>
+          <p class="erp-cta-desc">Tell us which ERP system you use and which countries you operate in. We'll match you with vetted providers that support your specific configuration.</p>
+        </div>
+        <a href="/routes" class="erp-cta-btn">
+          Request Provider Shortlist
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-erp {
+    padding: var(--space-12) 0 var(--space-20);
+  }
+
+  .page-hero {
+    margin-bottom: var(--space-12);
+    max-width: 640px;
+  }
+
+  .page-h1 {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--color-slate-950);
+    margin: 0 0 var(--space-3);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .erp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .erp-cta-section {
+    margin-top: var(--space-16);
+    padding-top: var(--space-12);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .erp-cta-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8) var(--space-10);
+  }
+
+  .erp-cta-text {
+    flex: 1;
+  }
+
+  .erp-cta-heading {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-slate-900);
+    margin: 0 0 var(--space-2);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .erp-cta-desc {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    margin: 0;
+    line-height: var(--leading-relaxed);
+    max-width: 480px;
+  }
+
+  .erp-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-accent);
+    color: white;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background var(--transition-fast), gap var(--transition-fast);
+  }
+
+  .erp-cta-btn:hover {
+    background: var(--color-accent-hover);
+    gap: var(--space-3);
+    color: white;
+  }
+
+  @media (max-width: 1024px) {
+    .erp-grid { grid-template-columns: repeat(2, 1fr); }
+    .erp-cta-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>

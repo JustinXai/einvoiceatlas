@@ -1,0 +1,219 @@
+---
+// SourcesBox — Official sources citation
+// Renders structured Source[] data with publisher, type, lastChecked fields.
+// Source type is rendered as a label badge.
+import type { Source } from '../../data/types';
+
+export interface Props {
+  sources: Source[];
+}
+
+const { sources } = Astro.props;
+
+const typeLabels: Record<string, string> = {
+  'tax-authority': 'Tax Authority',
+  'standard-body': 'Standard Body',
+  'government': 'Government',
+  'erp-docs': 'ERP Documentation',
+  'industry-reference': 'Industry Reference',
+};
+
+const typeColors: Record<string, string> = {
+  'tax-authority': 'type-tax',
+  'standard-body': 'type-standard',
+  'government': 'type-government',
+  'erp-docs': 'type-erp',
+  'industry-reference': 'type-industry',
+};
+---
+
+<div class="sources-box">
+  <div class="sources-header">
+    <h3 class="sources-title">Official Sources</h3>
+    <p class="sources-note">
+      All information on this page is based on the sources listed below.
+      Always verify current requirements with the issuing authorities.
+    </p>
+  </div>
+  <ul class="sources-list">
+    {sources.map((source) => (
+      <li class="source-item">
+        <div class="source-title-row">
+          <a
+            href={source.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="source-link"
+          >
+            <span class="source-title">{source.title}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="source-external-icon" aria-hidden="true">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+          <span class:list={['source-type-badge', typeColors[source.sourceType] ?? 'type-default']}>
+            {typeLabels[source.sourceType] ?? source.sourceType}
+          </span>
+        </div>
+        <div class="source-meta">
+          <span class="meta-publisher">{source.publisher}</span>
+          <span class="meta-divider" aria-hidden="true">·</span>
+          <span class="meta-checked">Last verified: {source.lastChecked}</span>
+        </div>
+        {source.coverage && (
+          <p class="source-coverage">{source.coverage}</p>
+        )}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .sources-box {
+    padding: var(--space-5) var(--space-6);
+    background: var(--color-paper-warm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+  }
+
+  .sources-header {
+    margin-bottom: var(--space-5);
+  }
+
+  .sources-title {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-500);
+    margin: 0 0 var(--space-2);
+  }
+
+  .sources-note {
+    font-size: var(--text-xs);
+    color: var(--color-slate-500);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+    font-style: italic;
+  }
+
+  .sources-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .source-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .source-item:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .source-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    justify-content: space-between;
+  }
+
+  .source-link {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-accent);
+    text-decoration: none;
+    flex: 1;
+    line-height: var(--leading-snug);
+  }
+
+  .source-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .source-external-icon {
+    flex-shrink: 0;
+    opacity: 0.5;
+    margin-top: 2px;
+  }
+
+  .source-type-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .type-tax {
+    background: var(--color-status-critical-bg);
+    color: var(--color-status-critical);
+  }
+
+  .type-standard {
+    background: var(--color-status-info-bg);
+    color: var(--color-status-info);
+  }
+
+  .type-government {
+    background: var(--color-status-upcoming-bg);
+    color: var(--color-status-upcoming);
+  }
+
+  .type-erp {
+    background: var(--color-accent-light);
+    color: var(--color-accent);
+  }
+
+  .type-industry {
+    background: var(--color-slate-100);
+    color: var(--color-slate-500);
+  }
+
+  .type-default {
+    background: var(--color-slate-100);
+    color: var(--color-slate-500);
+  }
+
+  .source-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-slate-500);
+    flex-wrap: wrap;
+  }
+
+  .meta-publisher {
+    font-weight: 500;
+    color: var(--color-slate-600);
+  }
+
+  .meta-divider {
+    color: var(--color-slate-300);
+  }
+
+  .source-coverage {
+    font-size: var(--text-xs);
+    color: var(--color-slate-500);
+    font-style: italic;
+    margin: 0;
+    line-height: var(--leading-relaxed);
+  }
+</style>

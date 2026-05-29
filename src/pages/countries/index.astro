@@ -1,0 +1,68 @@
+---
+// Countries index page
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/ui/SectionHeader.astro';
+import CountryCard from '../../components/cards/CountryCard.astro';
+import { countries } from '../../data/countries';
+---
+
+<BaseLayout
+  title="Browse Countries"
+  description={`Browse ${countries.length} countries with mandatory, upcoming, or voluntary e-invoicing mandates. Find requirements by country, format, and implementation timeline.`}
+>
+  <div class="container-content page-countries">
+    <div class="page-hero">
+      <h1 class="page-h1">E-Invoicing Mandates by Country</h1>
+      <SectionHeader
+        eyebrow="By Country"
+        title="Explore 7 countries with active, upcoming, or voluntary e-invoicing requirements. Each dossier covers mandate status, effective dates, required formats, ERP impact, and implementation checklists."
+      />
+    </div>
+
+    <div class="country-grid">
+      {countries.map(country => (
+        <CountryCard
+          slug={country.urlSlug ?? country.slug}
+          name={country.name}
+          isoCode={country.isoCode}
+          status={country.status}
+          effectiveDate={country.effectiveDate}
+          mandatePhase={country.mandatePhase}
+          formats={country.formats}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-countries {
+    padding: var(--space-12) 0 var(--space-20);
+  }
+
+  .page-hero {
+    margin-bottom: var(--space-12);
+  }
+
+  .page-h1 {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--color-slate-950);
+    margin: 0 0 var(--space-3);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .country-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 1024px) {
+    .country-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .country-grid { grid-template-columns: 1fr; }
+  }
+</style>

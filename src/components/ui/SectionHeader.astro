@@ -1,0 +1,89 @@
+---
+// SectionHeader — EInvoiceAtlas section header
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  align?: 'left' | 'center';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  align = 'left',
+  size = 'md',
+} = Astro.props;
+---
+
+<div class:list={['section-header', `align-${align}`, `size-${size}`]}>
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h2 class="title">{title}</h2>
+  {description && <p class="description">{description}</p>}
+</div>
+
+<style>
+  .section-header {
+    max-width: 640px;
+  }
+
+  .align-center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-accent-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  .title {
+    color: var(--color-slate-900);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .description {
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+  }
+
+  .size-sm .title {
+    font-size: var(--text-xl);
+  }
+
+  .size-sm .description {
+    font-size: var(--text-sm);
+    margin-top: var(--space-3);
+  }
+
+  .size-md .title {
+    font-size: var(--text-2xl);
+  }
+
+  .size-md .description {
+    font-size: var(--text-base);
+    margin-top: var(--space-3);
+  }
+
+  .size-lg .title {
+    font-size: var(--text-3xl);
+  }
+
+  .size-lg .description {
+    font-size: var(--text-lg);
+    margin-top: var(--space-4);
+  }
+
+  @media (max-width: 768px) {
+    .size-lg .title {
+      font-size: var(--text-2xl);
+    }
+  }
+</style>

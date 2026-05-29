@@ -1,0 +1,60 @@
+---
+// CountryGrid — Grid of country cards
+import CountryCard from './CountryCard.astro';
+import type { Country } from '../../data/countries';
+
+export interface Props {
+  countries: Country[];
+  columns?: 2 | 3 | 4;
+  compact?: boolean;
+}
+
+const { countries, columns = 3, compact = false } = Astro.props;
+---
+
+<div class:list={['country-grid', `cols-${columns}`]}>
+  {countries.map((country) => (
+    <CountryCard
+      slug={country.slug}
+      name={country.name}
+      isoCode={country.isoCode}
+      status={country.status}
+      effectiveDate={country.effectiveDate}
+      mandatePhase={country.mandatePhase}
+      formats={country.formats}
+      compact={compact}
+    />
+  ))}
+</div>
+
+<style>
+  .country-grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 1024px) {
+    .cols-4 { grid-template-columns: repeat(3, 1fr); }
+    .cols-3 { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .cols-4,
+    .cols-3,
+    .cols-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

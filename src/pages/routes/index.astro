@@ -1,0 +1,71 @@
+---
+// Routes index page
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/ui/SectionHeader.astro';
+import ProviderRouteBox from '../../components/blocks/ProviderRouteBox.astro';
+import ShortlistForm from '../../components/forms/ShortlistForm.astro';
+import { providerRoutes } from '../../data/providers';
+---
+
+<BaseLayout
+  title="Provider Routes"
+  description="Understand the four e-invoicing routes: Peppol Network, Direct API, Clearing House, and Hybrid. Choose the right approach before selecting a provider."
+>
+  <div class="container-content page-routes">
+    <div class="page-hero">
+      <h1 class="page-h1">Choose Your E-Invoicing Route</h1>
+      <SectionHeader
+        eyebrow="Provider Routes"
+        title="Understand the four routing approaches before selecting a provider"
+        description="The right route depends on your country, ERP system, and transaction volume. Select a route type to see details."
+        size="md"
+      />
+    </div>
+
+    <div class="routes-list">
+      {providerRoutes.map(route => (
+        <ProviderRouteBox route={route} />
+      ))}
+    </div>
+
+    <div class="shortlist-section">
+      <SectionHeader
+        eyebrow="Get Started"
+        title="Request a Provider Shortlist"
+        description="Tell us about your requirements and get matched with vetted e-invoicing providers."
+        size="md"
+      />
+      <div class="shortlist-wrapper">
+        <ShortlistForm />
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-routes {
+    padding: var(--space-12) 0 var(--space-20);
+  }
+
+  .page-hero {
+    margin-bottom: var(--space-12);
+  }
+
+  .routes-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin-bottom: var(--space-16);
+  }
+
+  .shortlist-section {
+    margin-top: var(--space-16);
+    padding-top: var(--space-12);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .shortlist-wrapper {
+    margin-top: var(--space-8);
+    max-width: 720px;
+  }
+</style>

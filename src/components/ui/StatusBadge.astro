@@ -1,0 +1,64 @@
+---
+// StatusBadge — EInvoiceAtlas status indicator
+export interface Props {
+  status: 'active' | 'mandatory' | 'upcoming' | 'voluntary' | 'phasing' | 'warning' | 'critical' | 'info';
+  label?: string;
+  showDot?: boolean;
+  size?: 'sm' | 'md';
+}
+
+const {
+  status,
+  label,
+  showDot = true,
+  size = 'md',
+} = Astro.props;
+
+const statusConfig = {
+  active: { class: 'badge-active', dot: 'dot-active', text: 'Active' },
+  mandatory: { class: 'badge-critical', dot: 'dot-critical', text: 'Mandatory' },
+  upcoming: { class: 'badge-upcoming', dot: 'dot-upcoming', text: 'Upcoming' },
+  voluntary: { class: 'badge-info', dot: 'dot-active', text: 'Voluntary' },
+  phasing: { class: 'badge-warning', dot: 'dot-warning', text: 'Phasing In' },
+  warning: { class: 'badge-warning', dot: 'dot-warning', text: 'Warning' },
+  critical: { class: 'badge-critical', dot: 'dot-critical', text: 'Critical' },
+  info: { class: 'badge-info', dot: 'dot-active', text: 'Info' },
+} as const;
+
+const config = statusConfig[status] ?? statusConfig.info;
+const displayLabel = label ?? config.text;
+---
+
+<span class:list={['status-badge', `badge-${size}`, config.class]}>
+  {showDot && <span class:list={['status-dot', config.dot]} aria-hidden="true" />}
+  {displayLabel}
+</span>
+
+<style>
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    border-radius: var(--radius-md);
+    white-space: nowrap;
+  }
+
+  .badge-sm {
+    font-size: 10px;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .badge-md {
+    font-size: var(--text-xs);
+    padding: 0.25rem 0.625rem;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+</style>

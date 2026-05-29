@@ -1,0 +1,55 @@
+---
+// DisclaimerBox — EInvoiceAtlas disclaimer
+export interface Props {
+  text?: string;
+  compact?: boolean;
+}
+
+const {
+  text = 'EInvoiceAtlas is an independent educational resource. We aggregate and synthesize information from official and authoritative sources, but we are not a law firm, tax advisor, or government agency. Nothing on this site constitutes legal, tax, or compliance advice.',
+  compact = false,
+} = Astro.props;
+---
+
+<aside class:list={['disclaimer-box', { compact }]}>
+  <div class="disclaimer-icon" aria-hidden="true">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+  </div>
+  <p class="disclaimer-text">{text}</p>
+</aside>
+
+<style>
+  .disclaimer-box {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: var(--color-slate-100);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .disclaimer-box.compact {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .disclaimer-icon {
+    color: var(--color-slate-500);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .disclaimer-text {
+    font-size: var(--text-xs);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+
+  .compact .disclaimer-text {
+    font-size: 11px;
+  }
+</style>

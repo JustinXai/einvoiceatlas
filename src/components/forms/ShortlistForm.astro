@@ -1,0 +1,226 @@
+---
+// ShortlistForm — EInvoiceAtlas provider shortlist request form
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Request Provider Shortlist',
+  description = 'Tell us about your requirements and get matched with vetted e-invoicing providers. We\'ll recommend options based on your country, ERP, and route preferences.',
+} = Astro.props;
+---
+
+<div class="shortlist-form">
+  <div class="form-header">
+    <h3 class="form-title">{title}</h3>
+    <p class="form-description">{description}</p>
+  </div>
+
+  <form class="form-body" action="#" method="post">
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="country" class="field-label">Country <span class="required">*</span></label>
+        <select id="country" name="country" required class="field-select">
+          <option value="">Select country</option>
+          <option value="france">France</option>
+          <option value="germany">Germany</option>
+          <option value="belgium">Belgium</option>
+          <option value="italy">Italy</option>
+          <option value="spain">Spain</option>
+          <option value="netherlands">Netherlands</option>
+          <option value="uk">United Kingdom</option>
+          <option value="other">Other / Multiple</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="erp" class="field-label">ERP / Accounting System <span class="required">*</span></label>
+        <select id="erp" name="erp" required class="field-select">
+          <option value="">Select system</option>
+          <option value="sap">SAP S/4HANA</option>
+          <option value="oracle">Oracle</option>
+          <option value="netsuite">NetSuite</option>
+          <option value="odoo">Odoo</option>
+          <option value="sage">Sage</option>
+          <option value="xero">Xero</option>
+          <option value="microsoft-dynamics">Microsoft Dynamics</option>
+          <option value="other">Other / None</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="route" class="field-label">Preferred Route</label>
+        <select id="route" name="route" class="field-select">
+          <option value="">Select route (optional)</option>
+          <option value="peppol">Peppol Network</option>
+          <option value="direct-api">Direct API / Government Portal</option>
+          <option value="clearing-house">Clearing House / PDP</option>
+          <option value="undecided">Not sure — help me decide</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="companySize" class="field-label">Company Size <span class="required">*</span></label>
+        <select id="companySize" name="companySize" required class="field-select">
+          <option value="">Select size</option>
+          <option value="smb">1–50 employees</option>
+          <option value="mid">51–500 employees</option>
+          <option value="enterprise">500+ employees</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="email" class="field-label">Work Email <span class="required">*</span></label>
+        <input type="email" id="email" name="email" required placeholder="you@company.com" class="field-input" />
+      </div>
+
+      <div class="form-field">
+        <label for="timeline" class="field-label">Timeline</label>
+        <select id="timeline" name="timeline" class="field-select">
+          <option value="">Select timeline</option>
+          <option value="immediate">Within 1 month</option>
+          <option value="1-3months">1–3 months</option>
+          <option value="3-6months">3–6 months</option>
+          <option value="planning">Just exploring</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="submit-btn">
+        Request Provider Shortlist
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="form-disclaimer">
+      By submitting this form, you agree to receive a response to your inquiry. We do not sell or share your information. This service is provided as-is for informational purposes.
+    </p>
+  </form>
+</div>
+
+<style>
+  .shortlist-form {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  .form-header {
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-paper-warm);
+  }
+
+  .form-title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-slate-900);
+    margin: 0 0 var(--space-2);
+  }
+
+  .form-description {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+
+  .form-body {
+    padding: var(--space-6);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+    margin-bottom: var(--space-6);
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .field-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-slate-700);
+  }
+
+  .required {
+    color: var(--color-status-critical);
+  }
+
+  .field-input,
+  .field-select {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--color-slate-900);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    width: 100%;
+  }
+
+  .field-input:focus,
+  .field-select:focus {
+    outline: none;
+    border-color: var(--color-accent-muted);
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  }
+
+  .field-input::placeholder {
+    color: var(--color-slate-400);
+  }
+
+  .form-actions {
+    margin-bottom: var(--space-4);
+  }
+
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-4) var(--space-6);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-surface);
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: background var(--transition-fast), gap var(--transition-fast);
+  }
+
+  .submit-btn:hover {
+    background: var(--color-accent-hover);
+    gap: var(--space-3);
+  }
+
+  .form-disclaimer {
+    font-size: var(--text-xs);
+    color: var(--color-slate-500);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  @media (max-width: 640px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

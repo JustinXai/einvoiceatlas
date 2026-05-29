@@ -1,0 +1,175 @@
+---
+// StandardCard — EInvoiceAtlas standard reference card
+export interface Props {
+  slug: string;
+  name: string;
+  shortName: string;
+  category: string;
+  governingBody: string;
+  countriesUsing: string[];
+  isPeppolBased: boolean;
+  compact?: boolean;
+}
+
+const { slug, name, shortName, category, governingBody, countriesUsing, isPeppolBased, compact = false } = Astro.props;
+
+const categoryLabels: Record<string, string> = {
+  universal: 'Universal',
+  regional: 'Regional',
+  national: 'National',
+};
+---
+
+<a href={`/standards/${slug}`} class:list={['standard-card', { compact }]}>
+  <div class="card-header">
+    <div class="standard-name-group">
+      <span class="standard-short">{shortName}</span>
+      <span class:list={['category-badge', `cat-${category}`]}>
+        {categoryLabels[category] ?? category}
+      </span>
+    </div>
+    {isPeppolBased && (
+      <span class="peppol-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        </svg>
+        Peppol
+      </span>
+    )}
+  </div>
+
+  {!compact && (
+    <p class="governing-body">{governingBody}</p>
+  )}
+
+  <div class="country-count">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+    <span>{countriesUsing.length} countries</span>
+  </div>
+
+  <div class="card-arrow" aria-hidden="true">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </svg>
+  </div>
+</a>
+
+<style>
+  .standard-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    text-decoration: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+    position: relative;
+  }
+
+  .standard-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .compact {
+    padding: var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .standard-name-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .standard-short {
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-slate-900);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .compact .standard-short {
+    font-size: var(--text-sm);
+  }
+
+  .category-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .cat-universal {
+    background: var(--color-status-info-bg);
+    color: var(--color-status-info);
+  }
+
+  .cat-regional {
+    background: var(--color-status-upcoming-bg);
+    color: var(--color-status-upcoming);
+  }
+
+  .cat-national {
+    background: var(--color-slate-100);
+    color: var(--color-slate-600);
+  }
+
+  .peppol-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    background: var(--color-accent-light);
+    color: var(--color-accent);
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .governing-body {
+    font-size: var(--text-xs);
+    color: var(--color-slate-500);
+    margin: 0;
+  }
+
+  .country-count {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-slate-500);
+  }
+
+  .card-arrow {
+    position: absolute;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    color: var(--color-slate-300);
+    opacity: 0;
+    transition: opacity var(--transition-fast), color var(--transition-fast);
+  }
+
+  .standard-card:hover .card-arrow {
+    opacity: 1;
+    color: var(--color-accent-muted);
+  }
+</style>

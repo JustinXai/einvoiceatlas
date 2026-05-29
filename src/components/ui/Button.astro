@@ -1,0 +1,147 @@
+---
+// Button — EInvoiceAtlas button component
+export interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  fullWidth?: boolean;
+  iconLeft?: string;
+  iconRight?: string;
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  fullWidth = false,
+  class: className = '',
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const tagProps = href ? { href } : { type };
+---
+
+<Tag
+  class:list={[
+    'btn',
+    `btn-${variant}`,
+    `btn-${size}`,
+    { 'btn-full': fullWidth, 'btn-disabled': disabled },
+    className,
+  ]}
+  {...tagProps}
+  disabled={disabled}
+>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast);
+    white-space: nowrap;
+    border-radius: var(--radius-lg);
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  /* Sizes */
+  .btn-sm {
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .btn-md {
+    font-size: var(--text-sm);
+    padding: var(--space-3) var(--space-5);
+  }
+
+  .btn-lg {
+    font-size: var(--text-base);
+    padding: var(--space-4) var(--space-6);
+  }
+
+  /* Variants */
+  .btn-primary {
+    background: var(--color-accent);
+    color: var(--color-surface);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .btn-primary:hover {
+    background: var(--color-accent-hover);
+    color: var(--color-surface);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+  }
+
+  .btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-slate-800);
+    border: 1px solid var(--color-border-strong);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .btn-secondary:hover {
+    background: var(--color-paper-warm);
+    color: var(--color-slate-900);
+    border-color: var(--color-slate-400);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-slate-700);
+  }
+
+  .btn-ghost:hover {
+    background: var(--color-slate-100);
+    color: var(--color-slate-900);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--color-accent);
+    border: 1.5px solid var(--color-accent-muted);
+  }
+
+  .btn-outline:hover {
+    background: var(--color-accent-light);
+    color: var(--color-accent-hover);
+  }
+
+  /* Full width */
+  .btn-full {
+    width: 100%;
+  }
+
+  /* Disabled */
+  .btn-disabled,
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+</style>

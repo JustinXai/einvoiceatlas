@@ -1,0 +1,713 @@
+---
+// Standard detail page — dynamic route
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import SourcesBox from '../../components/ui/SourcesBox.astro';
+import DisclaimerBox from '../../components/ui/DisclaimerBox.astro';
+import AISummaryBox from '../../components/ui/AISummaryBox.astro';
+import QuickAnswerBox from '../../components/ui/QuickAnswerBox.astro';
+import CountryCard from '../../components/cards/CountryCard.astro';
+import ERPCard from '../../components/cards/ERPCard.astro';
+import ShortlistForm from '../../components/forms/ShortlistForm.astro';
+import { standards } from '../../data/standards';
+import { countries } from '../../data/countries';
+import { erpSystems } from '../../data/erpSystems';
+
+export async function getStaticPaths() {
+  return standards.map(standard => ({
+    params: { slug: standard.urlSlug ?? standard.slug },
+    props: { standard },
+  }));
+}
+
+const { standard } = Astro.props;
+
+// Countries using this standard
+const usingCountries = countries.filter(c =>
+  c.relatedStandards.includes(standard.slug)
+);
+
+// ERPs supporting this standard
+const supportingERPs = erpSystems.filter(e =>
+  e.relatedStandards?.includes(standard.slug)
+);
+
+// Quick answers — use quickAnswer from data if available
+const rawQA = (standard as any).quickAnswer as { question: string; answer: string; order: number }[] | undefined;
+const quickAnswers = rawQA && rawQA.length > 0
+  ? rawQA.map(qa => ({ q: qa.question, a: qa.answer }))
+  : [
+      {
+        q: `What is ${standard.shortName}?`,
+        a: standard.description.slice(0, 180) + '...',
+      },
+      {
+        q: `Is ${standard.shortName} a legal mandate?`,
+        a: `${standard.shortName} is a ${standard.category} standard. Whether it is legally required depends on the country and sector — check the country dossiers below.`,
+      },
+      {
+        q: `How many countries use ${standard.shortName}?`,
+        a: `${standard.countriesUsing.length} countries or regions reference this standard in their e-invoicing frameworks.`,
+      },
+      {
+        q: `Is ${standard.shortName} XML-based?`,
+        a: standard.isXmlBased
+          ? 'Yes — this standard uses XML syntax.'
+          : 'This standard can be implemented in multiple formats. See the description for technical details.',
+      },
+    ];
+
+// Breadcrumb
+const breadcrumbItems = [
+  { label: 'Standards', href: '/standards' },
+  { label: standard.shortName },
+];
+
+// Meta
+const metaDescription = `${standard.shortName}: ${standard.description.slice(0, 150)}... Governing body: ${standard.governingBody}. Used in ${standard.countriesUsing.length} countries. Source-backed technical reference.`;
+
+const categoryLabels: Record<string, string> = {
+  universal: 'Universal',
+  regional: 'Regional',
+  national: 'National',
+};
+
+const peppolNote = standard.isPeppolBased
+  ? 'Yes — built on UBL 2.1 with EN 16931 semantics. Used on the Peppol Network for global e-delivery.'
+  : 'No — this standard is not based on Peppol. It may use a different delivery mechanism.';
+
+const formatNote = standard.isPdfBased
+  ? 'Yes — uses a PDF/A document with embedded structured data.'
+  : standard.isXmlBased
+  ? 'Yes — uses XML structured data.'
+  : 'Format-agnostic — can be implemented in XML, PDF+XML, or other structured formats.';
+---
+
+<BaseLayout
+  title={`${standard.shortName} E-Invoice Standard`}
+  description={metaDescription}
+>
+  <div class="container-content page-standard">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <div class="standard-header">
+      <div class="standard-title-row">
+        <div class="standard-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <div class="standard-titles">
+          <h1 class="standard-h1">{standard.shortName} E-Invoice Standard</h1>
+          <div class="standard-badges">
+            <span class:list={['category-label', `cat-${standard.category}`]}>
+              {categoryLabels[standard.category] ?? standard.category}
+            </span>
+            {standard.isPeppolBased && (
+              <span class="peppol-label">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                </svg>
+                Peppol-based
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <p class="standard-governing">
+        {standard.governingBody} · Version {standard.version}
+      </p>
+      <p class="standard-description">{standard.description}</p>
+
+      <div class="standard-meta-grid">
+        <div class="meta-stat">
+          <span class="meta-stat-value">{standard.countriesUsing.length}</span>
+          <span class="meta-stat-label">Countries</span>
+        </div>
+        <div class="meta-stat">
+          <span class="meta-stat-value">{standard.mandatoryFields}+</span>
+          <span class="meta-stat-label">Data fields</span>
+        </div>
+        <div class="meta-stat">
+          <span class="meta-stat-value">{formatNote.startsWith('Yes') ? 'Yes' : 'Multi'}</span>
+          <span class="meta-stat-label">Structured format</span>
+        </div>
+        <div class="meta-stat">
+          <span class="meta-stat-value">{peppolNote.startsWith('Yes') ? 'Peppol' : 'Varies'}</span>
+          <span class="meta-stat-label">Delivery network</span>
+        </div>
+      </div>
+    </div>
+
+    {standard.aiSummary && (
+      <AISummaryBox summary={standard.aiSummary} />
+    )}
+
+    <QuickAnswerBox items={quickAnswers} />
+
+    <div class="standard-content-grid">
+      <div class="standard-main">
+
+        {standard.dataFieldOverview && standard.dataFieldOverview.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Key Data Fields</h2>
+            <p class="section-intro">
+              The following data elements are central to the {standard.shortName} specification. Mandatory fields are required for compliance; optional fields add detail.
+            </p>
+            <div class="field-groups">
+              {standard.dataFieldOverview.slice(0, 5).map(group => (
+                <div class="field-group">
+                  <h3 class="field-group-title">{group.group}</h3>
+                  <div class="field-table">
+                    <div class="field-table-header">
+                      <span>Code</span>
+                      <span>Field name</span>
+                      <span>Mandatory</span>
+                    </div>
+                    {group.fields.slice(0, 8).map(field => (
+                      <div class="field-row">
+                        <code class="field-code">{field.code}</code>
+                        <span class="field-name">{field.name}{field.note ? ` — ${field.note}` : ''}</span>
+                        <span class:list={['field-mandatory', field.mandatory ? 'is-mandatory' : 'is-optional']}>
+                          {field.mandatory ? 'Yes' : 'No'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {standard.validationRules && standard.validationRules.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Validation Requirements</h2>
+            <p class="section-intro">
+              Invoices using this standard must pass the following validation checks before transmission. Rejections typically occur due to missing mandatory fields or incorrect data types.
+            </p>
+            <ul class="validation-list">
+              {standard.validationRules.map(rule => (
+                <li class="validation-item">{rule}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {(standard.pros ?? []).length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Key Advantages</h2>
+            <ul class="pros-list">
+              {(standard.pros ?? []).map(pro => (
+                <li class="pro-item">{pro}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {(standard.cons ?? []).length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Implementation Considerations</h2>
+            <ul class="cons-list">
+              {(standard.cons ?? []).map(con => (
+                <li class="con-item">{con}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {standard.commonMistakes && standard.commonMistakes.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Common Mistakes to Avoid</h2>
+            <ul class="mistakes-list">
+              {standard.commonMistakes.map(mistake => (
+                <li class="mistake-item">{mistake}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+
+      <div class="standard-sidebar">
+        <div class="route-cta">
+          <h2 class="section-h2">Need implementation help?</h2>
+          <p class="route-cta-desc">
+            Tell us your ERP, countries of operation, and transaction volume. We'll match you with vetted providers familiar with {standard.shortName}.
+          </p>
+          <ShortlistForm compact={true} />
+        </div>
+      </div>
+    </div>
+
+    {usingCountries.length > 0 && (
+      <section class="related-section">
+        <h2 class="section-h2">Countries Using {standard.shortName}</h2>
+        <div class="related-grid">
+          {usingCountries.map(country => (
+            <CountryCard
+              slug={country.urlSlug ?? country.slug}
+              name={country.name}
+              isoCode={country.isoCode}
+              status={country.status}
+              effectiveDate={country.effectiveDate}
+              mandatePhase={country.mandatePhase}
+              formats={country.formats}
+              compact={true}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {supportingERPs.length > 0 && (
+      <section class="related-section">
+        <h2 class="section-h2">ERP Systems Supporting {standard.shortName}</h2>
+        <div class="related-grid">
+          {supportingERPs.slice(0, 4).map(erp => (
+            <ERPCard
+              slug={erp.urlSlug ?? erp.slug}
+              name={erp.name}
+              vendor={erp.vendor}
+              category={erp.category}
+              nativeEInvoiceSupport={erp.nativeEInvoiceSupport}
+              applicableCountries={erp.applicableCountries}
+              configurationComplexity={erp.configurationComplexity}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {standard.officialSources.length > 0 && (
+      <SourcesBox sources={standard.officialSources} />
+    )}
+
+    <div class="page-footer-meta">
+      <p class="last-reviewed">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Last reviewed: {standard.lastReviewed}
+      </p>
+    </div>
+
+    <DisclaimerBox />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-standard {
+    padding: var(--space-8) 0 var(--space-20);
+  }
+
+  .standard-header {
+    margin-bottom: var(--space-10);
+  }
+
+  .standard-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .standard-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-accent-light);
+    border-radius: var(--radius-lg);
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .standard-titles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: flex-start;
+  }
+
+  .standard-h1 {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--color-slate-950);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    margin: 0;
+  }
+
+  .standard-badges {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .category-label {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+  }
+
+  .cat-universal {
+    background: var(--color-status-info-bg);
+    color: var(--color-status-info);
+  }
+
+  .cat-regional {
+    background: var(--color-status-upcoming-bg);
+    color: var(--color-status-upcoming);
+  }
+
+  .cat-national {
+    background: var(--color-slate-100);
+    color: var(--color-slate-600);
+  }
+
+  .peppol-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    background: var(--color-accent-light);
+    color: var(--color-accent);
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+  }
+
+  .standard-governing {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-slate-500);
+    margin: 0 0 var(--space-3);
+  }
+
+  .standard-description {
+    font-size: var(--text-base);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0 0 var(--space-6);
+  }
+
+  .standard-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 640px) {
+    .standard-meta-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .meta-stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--color-slate-50);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    align-items: center;
+    text-align: center;
+  }
+
+  .meta-stat-value {
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--color-slate-900);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .meta-stat-label {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-slate-500);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+  }
+
+  .standard-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-10);
+    margin: var(--space-10) 0;
+  }
+
+  @media (max-width: 900px) {
+    .standard-content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .standard-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+
+  .standard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .content-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .section-h2 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-slate-900);
+    letter-spacing: var(--tracking-tight);
+    margin: 0;
+    padding-bottom: var(--space-3);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .section-intro {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+
+  .field-groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .field-group-title {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-slate-800);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+  }
+
+  .field-table {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .field-table-header {
+    display: grid;
+    grid-template-columns: 120px 1fr 90px;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-slate-50);
+    border-bottom: 1px solid var(--color-border-subtle);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-500);
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 90px;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--color-border-subtle);
+    font-size: var(--text-sm);
+    align-items: center;
+  }
+
+  .field-row:last-child {
+    border-bottom: none;
+  }
+
+  .field-row:nth-child(even) {
+    background: var(--color-slate-50);
+  }
+
+  .field-code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .field-name {
+    color: var(--color-slate-700);
+    font-size: var(--text-sm);
+  }
+
+  .field-mandatory {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+  }
+
+  .field-mandatory.is-mandatory {
+    color: var(--color-status-critical);
+  }
+
+  .field-mandatory.is-optional {
+    color: var(--color-slate-400);
+  }
+
+  .validation-list, .pros-list, .cons-list, .mistakes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .validation-item {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    padding-left: var(--space-5);
+    position: relative;
+  }
+
+  .validation-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+    border-radius: 50%;
+  }
+
+  .pro-item {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    padding-left: var(--space-5);
+    position: relative;
+  }
+
+  .pro-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background: var(--color-status-active);
+    border-radius: 50%;
+  }
+
+  .con-item {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    padding-left: var(--space-5);
+    position: relative;
+  }
+
+  .con-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background: var(--color-status-warning);
+    border-radius: 50%;
+  }
+
+  .mistake-item {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    padding-left: var(--space-5);
+    position: relative;
+  }
+
+  .mistake-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background: var(--color-status-critical);
+    border-radius: 50%;
+  }
+
+  .route-cta {
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .route-cta-desc {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    margin: 0;
+    line-height: var(--leading-relaxed);
+  }
+
+  .related-section {
+    margin-top: var(--space-10);
+    padding-top: var(--space-10);
+    border-top: 2px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .page-footer-meta {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .last-reviewed {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-slate-400);
+    margin: 0;
+  }
+</style>

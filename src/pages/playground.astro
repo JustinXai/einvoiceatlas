@@ -1,0 +1,2065 @@
+---
+// Playground — EInvoiceAtlas User Journey Visualization
+// This page demonstrates how real users navigate from entry to conversion.
+// Every section shows: WHY here → WHAT they learn → WHAT next.
+// Flow connections between blocks are explicitly visualized.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/blocks/Hero.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import StatusBadge from '../components/ui/StatusBadge.astro';
+import AISummaryBox from '../components/ui/AISummaryBox.astro';
+import QuickAnswerBox from '../components/ui/QuickAnswerBox.astro';
+import InfoBlock from '../components/ui/InfoBlock.astro';
+import DisclaimerBox from '../components/ui/DisclaimerBox.astro';
+import SourcesBox from '../components/ui/SourcesBox.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import CountryCard from '../components/cards/CountryCard.astro';
+import StandardCard from '../components/cards/StandardCard.astro';
+import ERPCard from '../components/cards/ERPCard.astro';
+import HookCard from '../components/cards/HookCard.astro';
+import ImplementationChecklist from '../components/blocks/ImplementationChecklist.astro';
+import DeadlineBanner from '../components/blocks/DeadlineBanner.astro';
+import ProviderRouteBox from '../components/blocks/ProviderRouteBox.astro';
+import ShortlistForm from '../components/forms/ShortlistForm.astro';
+import { countries } from '../data/countries';
+import { standards } from '../data/standards';
+import { erpSystems } from '../data/erpSystems';
+import { providerRoutes } from '../data/providers';
+import { contentHooks } from '../data/contentHooks';
+import { userJourneys } from '../data/userJourneys';
+
+// Sample data
+const france = countries.find(c => c.slug === 'france')!;
+const germany = countries.find(c => c.slug === 'germany')!;
+const belgium = countries.find(c => c.slug === 'belgium')!;
+const en16931 = standards.find(s => s.slug === 'en-16931')!;
+const peppolBis = standards.find(s => s.slug === 'peppol-bis-3')!;
+const facturx = standards.find(s => s.slug === 'factur-x')!;
+const xrechnung = standards.find(s => s.slug === 'xrechnung')!;
+const sap = erpSystems.find(e => e.slug === 'sap')!;
+const odood = erpSystems.find(e => e.slug === 'odoo')!;
+const peppolRoute = providerRoutes.find(r => r.slug === 'peppol-network')!;
+const directApiRoute = providerRoutes.find(r => r.slug === 'direct-api')!;
+const clearingHouseRoute = providerRoutes.find(r => r.slug === 'clearing-house')!;
+const hybridRoute = providerRoutes.find(r => r.slug === 'hybrid')!;
+
+// Active countries for grids
+const activeMandateCountries = countries.filter(c =>
+  c.status === 'mandatory' || c.status === 'active'
+);
+
+// Journey annotations for this playground
+const journeyAnnotations = {
+  'path-a-country-regulation': {
+    annotationLabel: 'Journey A — Country Regulation Entry',
+    annotationColor: 'accent',
+    searchQuery: '"France e-invoicing mandate 2026"',
+    entryPage: '/countries/france',
+  },
+  'path-b-standard-understanding': {
+    annotationLabel: 'Journey B — Standard Understanding Entry',
+    annotationColor: 'teal',
+    searchQuery: '"Peppol BIS 3 explained"',
+    entryPage: '/standards/peppol-bis-3',
+  },
+  'path-c-erp-implementation': {
+    annotationLabel: 'Journey C — ERP Implementation Entry',
+    annotationColor: 'amber',
+    searchQuery: '"SAP e-invoicing Germany"',
+    entryPage: '/erp/sap',
+  },
+  'path-d-purchase-intent': {
+    annotationLabel: 'Journey D — Route Decision Entry',
+    annotationColor: 'indigo',
+    searchQuery: '"e-invoicing provider Belgium"',
+    entryPage: '/routes',
+  },
+  'path-e-time-pressured': {
+    annotationLabel: 'Journey E — Time-Pressured Entry',
+    annotationColor: 'rose',
+    searchQuery: '"Belgium mandate deadline 2026"',
+    entryPage: '/countries/belgium',
+  },
+};
+---
+
+<BaseLayout title="User Journey Playground — EInvoiceAtlas" description="Visual walkthrough of EInvoiceAtlas user journeys from search entry to conversion.">
+
+<div class="playground-page">
+
+  <!-- ============================================================ -->
+  <!-- PLAYGROUND HEADER — Journey Map Overview -->
+  <!-- ============================================================ -->
+  <div class="playground-banner">
+    <div class="container-site">
+      <div class="banner-inner">
+        <div class="banner-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>User Journey Playground</span>
+        </div>
+        <p class="banner-desc">
+          This page visualizes how real users navigate EInvoiceAtlas — from search entry
+          to conversion. Each section shows: <strong>why they're here</strong>,
+          <strong>what they learn</strong>, and <strong>what they click next</strong>.
+        </p>
+        <div class="journey-legend">
+          {Object.entries(journeyAnnotations).map(([id, ann]) => (
+            <div class="legend-item">
+              <span class={`legend-dot legend-${ann.annotationColor}`}></span>
+              <span class="legend-label">{ann.annotationLabel}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- JOURNEY A: Country Regulation Entry -->
+  <!-- ============================================================ -->
+  <section class="journey-section" id="journey-a" data-journey="path-a-country-regulation">
+    <div class="container-site">
+
+      <!-- Journey Header -->
+      <div class="journey-header">
+        <div class="journey-tag accent">
+          <span class="journey-tag-dot"></span>
+          Journey A
+        </div>
+        <div class="journey-meta">
+          <div class="journey-search">
+            <span class="search-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </span>
+            <code>{journeyAnnotations['path-a-country-regulation'].searchQuery}</code>
+          </div>
+          <span class="entry-page">{journeyAnnotations['path-a-country-regulation'].entryPage}</span>
+        </div>
+        <h2 class="journey-title">Country Regulation Entry</h2>
+        <p class="journey-persona">CFO · Finance Lead · Tax Manager</p>
+        <p class="journey-desc">
+          User found a country-specific page that directly addresses their search query
+          about French e-invoicing obligations. They need to know: <em>am I affected,
+          what format, and by when?</em>
+        </p>
+      </div>
+
+      <!-- Flow: Country Page Entry Blocks -->
+      <div class="flow-blocks">
+
+        <!-- Block A1: Entry — Country Card (What brought them here) -->
+        <div class="flow-node entry-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">1</span>
+            <span class="flow-node-tag">Entry</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Why they arrived here</span>
+              <p class="context-text">
+                User searched "France e-invoicing mandate 2026" — they need compliance clarity
+                for a specific country.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <CountryCard
+                slug={france.slug}
+                name={france.name}
+                isoCode={france.isoCode}
+                status={france.status}
+                effectiveDate={france.effectiveDate}
+                mandatePhase={france.mandatePhase}
+                formats={france.formats}
+              />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                France is mandatory, Factur-X format, enforcement since Jan 2025.
+              </span>
+            </div>
+          </div>
+          <!-- Flow connector -->
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">Country card → Standard reference</span>
+          </div>
+        </div>
+
+        <!-- Block A2: What They Learn — Standards Related to Country -->
+        <div class="flow-node learning-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">2</span>
+            <span class="flow-node-tag">Standard Reference</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Content they see next</span>
+              <p class="context-text">
+                After seeing the mandate, they want to understand the format. Related
+                standards are surfaced on the country page — e.g., Factur-X for France.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <SectionHeader
+                eyebrow="Required Format"
+                title={`Factur-X — France's Mandated Standard`}
+                description="EN 16931-compliant hybrid format: PDF + embedded XML."
+              />
+              <div class="mini-card-row">
+                <StandardCard
+                  slug={facturx.slug}
+                  name={facturx.name}
+                  shortName={facturx.shortName}
+                  category={facturx.category}
+                  governingBody={facturx.governingBody}
+                  countriesUsing={facturx.countriesUsing}
+                  isPeppolBased={facturx.isPeppolBased}
+                />
+              </div>
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                Factur-X = PDF with embedded EN 16931 XML. Hybrid = human + machine readable.
+              </span>
+            </div>
+          </div>
+          <!-- Flow connector -->
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">Format → Provider route</span>
+          </div>
+        </div>
+
+        <!-- Block A3: Decision — Provider Route / Shortlist CTA -->
+        <div class="flow-node decision-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">3</span>
+            <span class="flow-node-tag">Conversion Point</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">What they do next</span>
+              <p class="context-text">
+                After understanding the format, they need a provider. The provider shortlist
+                CTA appears at the bottom of every country and standard page.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <HookCard
+                name="Provider Shortlist Request"
+                description="Get matched with vetted e-invoicing providers for France, Factur-X, and your ERP."
+                ctaLabel="Request Provider Shortlist"
+                icon="shortlist"
+                href="/routes"
+              />
+              <HookCard
+                name="Country Readiness Checklist"
+                description="10-point assessment for France: legal, ERP, format, timeline."
+                ctaLabel="Get France Readiness Checklist"
+                icon="checklist"
+                href="/countries/france"
+              />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">Next step:</span>
+              <span class="annotation-text">
+                Download checklist → Submit shortlist form → Evaluate providers.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Journey Outcome Bar -->
+      <div class="journey-outcome">
+        <div class="outcome-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Journey outcome
+        </div>
+        <p class="outcome-text">
+          User confirms obligation → understands format → requests vendor shortlist.
+          <strong>Conversion: Provider Shortlist Form submission.</strong>
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- JOURNEY B: Standard Understanding Entry -->
+  <!-- ============================================================ -->
+  <section class="journey-section" id="journey-b" data-journey="path-b-standard-understanding">
+    <div class="container-site">
+
+      <div class="journey-header">
+        <div class="journey-tag teal">
+          <span class="journey-tag-dot"></span>
+          Journey B
+        </div>
+        <div class="journey-meta">
+          <div class="journey-search">
+            <span class="search-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </span>
+            <code>{journeyAnnotations['path-b-standard-understanding'].searchQuery}</code>
+          </div>
+          <span class="entry-page">{journeyAnnotations['path-b-standard-understanding'].entryPage}</span>
+        </div>
+        <h2 class="journey-title">Standard Understanding Entry</h2>
+        <p class="journey-persona">Tax Manager · Compliance Manager · ERP Owner</p>
+        <p class="journey-desc">
+          User is trying to understand what Peppol BIS 3 is, how it relates to EN 16931,
+          and which countries use it. They need conceptual clarity before operational planning.
+        </p>
+      </div>
+
+      <div class="flow-blocks">
+
+        <!-- Block B1: Entry — Standard Card -->
+        <div class="flow-node entry-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">1</span>
+            <span class="flow-node-tag">Entry</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Why they arrived here</span>
+              <p class="context-text">
+                User searched "Peppol BIS 3 explained" — they understand e-invoicing
+                requires structure, but need to understand the standard landscape.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <StandardCard
+                slug={peppolBis.slug}
+                name={peppolBis.name}
+                shortName={peppolBis.shortName}
+                category={peppolBis.category}
+                governingBody={peppolBis.governingBody}
+                countriesUsing={peppolBis.countriesUsing}
+                isPeppolBased={peppolBis.isPeppolBased}
+              />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                Peppol BIS 3 = UBL 2.1 + EN 16931 semantics + Peppol network routing.
+              </span>
+            </div>
+          </div>
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">Standard → Country examples</span>
+          </div>
+        </div>
+
+        <!-- Block B2: Country Examples — Standards Have Related Countries -->
+        <div class="flow-node learning-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">2</span>
+            <span class="flow-node-tag">Country Examples</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Content they see next</span>
+              <p class="context-text">
+                After understanding the standard, they need to know: which countries mandate
+                this standard? The standard page surfaces countries using it.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <SectionHeader
+                eyebrow="Countries Using Peppol BIS 3"
+                title="Where Peppol Is Mandated or Accepted"
+                description={`${peppolBis.countriesUsing.length} countries across Europe and Asia-Pacific use Peppol BIS 3.`}
+                size="sm"
+              />
+              <div class="country-grid-demo">
+                {countries.filter(c => peppolBis.countriesUsing.includes(c.slug)).slice(0, 4).map(country => (
+                  <CountryCard
+                    slug={country.slug}
+                    name={country.name}
+                    isoCode={country.isoCode}
+                    status={country.status}
+                    effectiveDate={country.effectiveDate}
+                    mandatePhase={country.mandatePhase}
+                    formats={country.formats}
+                    compact={true}
+                  />
+                ))}
+              </div>
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                France, Germany, Belgium, Netherlands — all mandate or accept Peppol-based formats.
+              </span>
+            </div>
+          </div>
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">Country → Route guide</span>
+          </div>
+        </div>
+
+        <!-- Block B3: Route Decision -->
+        <div class="flow-node decision-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">3</span>
+            <span class="flow-node-tag">Route Decision</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">What they do next</span>
+              <p class="context-text">
+                With standard and country knowledge, they need to choose a route.
+                The route page shows all four approaches with complexity indicators.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <ProviderRouteBox route={peppolRoute} />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">Next step:</span>
+              <span class="annotation-text">
+                Select Peppol route → Check if their ERP supports it → Request shortlist.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-outcome">
+        <div class="outcome-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Journey outcome
+        </div>
+        <p class="outcome-text">
+          User understands Peppol → identifies countries → selects Peppol route → requests provider shortlist.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- JOURNEY C: ERP Implementation Entry -->
+  <!-- ============================================================ -->
+  <section class="journey-section" id="journey-c" data-journey="path-c-erp-implementation">
+    <div class="container-site">
+
+      <div class="journey-header">
+        <div class="journey-tag amber">
+          <span class="journey-tag-dot"></span>
+          Journey C
+        </div>
+        <div class="journey-meta">
+          <div class="journey-search">
+            <span class="search-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </span>
+            <code>{journeyAnnotations['path-c-erp-implementation'].searchQuery}</code>
+          </div>
+          <span class="entry-page">{journeyAnnotations['path-c-erp-implementation'].entryPage}</span>
+        </div>
+        <h2 class="journey-title">ERP Implementation Entry</h2>
+        <p class="journey-persona">ERP Owner · Implementation Lead · Technical Architect</p>
+        <p class="journey-desc">
+          User manages SAP S/4HANA and needs to understand how to configure it for
+          German e-invoicing. They are technically focused and need implementation specifics.
+        </p>
+      </div>
+
+      <div class="flow-blocks">
+
+        <!-- Block C1: Entry — ERP Card -->
+        <div class="flow-node entry-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">1</span>
+            <span class="flow-node-tag">Entry</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Why they arrived here</span>
+              <p class="context-text">
+                User searched "SAP e-invoicing Germany" — they manage the ERP and need
+                technical configuration guidance for a specific mandate.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <ERPCard
+                slug={sap.slug}
+                name={sap.name}
+                vendor={sap.vendor}
+                category={sap.category}
+                nativeEInvoiceSupport={sap.nativeEInvoiceSupport}
+                applicableCountries={sap.applicableCountries}
+                configurationComplexity={sap.configurationComplexity}
+              />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                SAP has native XRechnung support via output management. Complexity: High.
+              </span>
+            </div>
+          </div>
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">ERP → Country requirements</span>
+          </div>
+        </div>
+
+        <!-- Block C2: Country Requirements -->
+        <div class="flow-node learning-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">2</span>
+            <span class="flow-node-tag">Country Dossier</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Content they see next</span>
+              <p class="context-text">
+                The ERP page links to country-specific requirements. For SAP Germany,
+                the ERP page surfaces German mandate details.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <div class="country-hero mini">
+                <div class="country-hero-left">
+                  <div class="country-title-row">
+                    <h3 class="country-title-sm">Germany</h3>
+                    <StatusBadge status="mandatory" label="B2G Mandatory" />
+                  </div>
+                  <p class="country-phase-sm">XRechnung required for all B2G invoices</p>
+                </div>
+              </div>
+              <InfoBlock label="Required Format" value="XRechnung (EN 16931, pure XML)" variant="compact" />
+              <InfoBlock label="Enforcement Date" value="Nov 2017 (B2G)" variant="compact" />
+              <InfoBlock label="Validation Tool" value="KoSIT validator" variant="compact" />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                Germany B2G mandates XRechnung. SAP configures via output management + BRF+.
+              </span>
+            </div>
+          </div>
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">Requirements → Implementation checklist</span>
+          </div>
+        </div>
+
+        <!-- Block C3: Implementation Checklist -->
+        <div class="flow-node decision-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">3</span>
+            <span class="flow-node-tag">Implementation</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">What they do next</span>
+              <p class="context-text">
+                With ERP capability confirmed and country requirements clear, they need
+                a structured technical implementation plan. The ERP checklist provides this.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <ImplementationChecklist
+                items={sap.implementationChecklist.slice(0, 3)}
+                title={`${sap.name} Implementation Checklist`}
+              />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">Next step:</span>
+              <span class="annotation-text">
+                Follow checklist steps → Test with KoSIT sandbox → Request provider shortlist for Peppol access point.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-outcome">
+        <div class="outcome-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Journey outcome
+        </div>
+        <p class="outcome-text">
+          User confirms SAP capability → understands Germany requirements → follows technical checklist → requests shortlist for access point.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- JOURNEY D: Route Decision Entry -->
+  <!-- ============================================================ -->
+  <section class="journey-section" id="journey-d" data-journey="path-d-purchase-intent">
+    <div class="container-site">
+
+      <div class="journey-header">
+        <div class="journey-tag indigo">
+          <span class="journey-tag-dot"></span>
+          Journey D
+        </div>
+        <div class="journey-meta">
+          <div class="journey-search">
+            <span class="search-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </span>
+            <code>{journeyAnnotations['path-d-purchase-intent'].searchQuery}</code>
+          </div>
+          <span class="entry-page">{journeyAnnotations['path-d-purchase-intent'].entryPage}</span>
+        </div>
+        <h2 class="journey-title">Route Decision Entry</h2>
+        <p class="journey-persona">CFO · Finance Lead · ERP Owner</p>
+        <p class="journey-desc">
+          User is looking for vendor options but has been educated that route selection
+          comes before provider selection. They need to understand: Peppol vs API vs Portal.
+        </p>
+      </div>
+
+      <div class="flow-blocks">
+
+        <!-- Block D1: Entry — Route Page Hero -->
+        <div class="flow-node entry-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">1</span>
+            <span class="flow-node-tag">Entry</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Why they arrived here</span>
+              <p class="context-text">
+                User searched "e-invoicing provider Belgium" — but vendor lists without
+                route understanding lead to poor decisions. This page educates first.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <Hero variant="page" title="Choose Your E-Invoicing Route" subtitle="Peppol · Direct API · Clearing House · Hybrid" />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                Route first, then provider. Four approaches with different complexity levels.
+              </span>
+            </div>
+          </div>
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">Route overview → Decision aid</span>
+          </div>
+        </div>
+
+        <!-- Block D2: Route Comparison Matrix -->
+        <div class="flow-node learning-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">2</span>
+            <span class="flow-node-tag">Route Comparison</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Content they see next</span>
+              <p class="context-text">
+                A side-by-side comparison table shows complexity, country coverage,
+                and ideal use cases for each route — helping users self-select.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <div class="route-matrix">
+                <table class="comparison-table">
+                  <thead>
+                    <tr>
+                      <th>Route</th>
+                      <th>Complexity</th>
+                      <th>Countries</th>
+                      <th>Best For</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {providerRoutes.map(route => (
+                      <tr>
+                        <td><strong>{route.name}</strong></td>
+                        <td>
+                          <span class={`complexity-tag complexity-${route.complexity}`}>
+                            {route.complexity}
+                          </span>
+                        </td>
+                        <td>{route.countriesApplicable.join(', ')}</td>
+                        <td>{route.bestFor[0]}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                Peppol = multi-country. Clearing House = France/Italy mandatory. API = single country.
+              </span>
+            </div>
+          </div>
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">Route selected → Shortlist form</span>
+          </div>
+        </div>
+
+        <!-- Block D3: Provider Shortlist -->
+        <div class="flow-node decision-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">3</span>
+            <span class="flow-node-tag">Conversion</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">What they do next</span>
+              <p class="context-text">
+                After selecting a route, the user submits the provider shortlist form.
+                Route preference is captured as a form field.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <HookCard
+                name="Provider Shortlist Request"
+                description="Tell us your country, ERP, and route preference. We'll match you with vetted providers."
+                ctaLabel="Request Provider Shortlist"
+                icon="shortlist"
+                href="/routes"
+              />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">Next step:</span>
+              <span class="annotation-text">
+                Receive 3-5 provider recommendations → Evaluate against route and ERP → Contact providers.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-outcome">
+        <div class="outcome-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Journey outcome
+        </div>
+        <p class="outcome-text">
+          User understands route → selects route → submits shortlist form with country + ERP + route preference.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- JOURNEY E: Time-Pressured Entry -->
+  <!-- ============================================================ -->
+  <section class="journey-section" id="journey-e" data-journey="path-e-time-pressured">
+    <div class="container-site">
+
+      <div class="journey-header">
+        <div class="journey-tag rose">
+          <span class="journey-tag-dot"></span>
+          Journey E
+        </div>
+        <div class="journey-meta">
+          <div class="journey-search">
+            <span class="search-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </span>
+            <code>{journeyAnnotations['path-e-time-pressured'].searchQuery}</code>
+          </div>
+          <span class="entry-page">{journeyAnnotations['path-e-time-pressured'].entryPage}</span>
+        </div>
+        <h2 class="journey-title">Time-Pressured Entry</h2>
+        <p class="journey-persona">CFO · Finance Lead · Tax Manager</p>
+        <p class="journey-desc">
+          User is under time pressure — Belgium's January 2026 mandate is approaching
+          and they need rapid clarity on obligations and immediate next steps.
+        </p>
+      </div>
+
+      <div class="flow-blocks">
+
+        <!-- Block E1: Deadline Banner -->
+        <div class="flow-node entry-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">1</span>
+            <span class="flow-node-tag">Entry</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Why they arrived here</span>
+              <p class="context-text">
+                Urgency-driven search. They know Belgium has a deadline and need
+                to confirm: am I in scope, what do I need to do, how fast?
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <DeadlineBanner
+                country="Belgium"
+                date="2026-01-01"
+                phase="Phase 1 B2B mandate begins"
+                urgency="high"
+              />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                Jan 1, 2026 — turnover > €85K = in scope. UBL 2.1 format. Peppol or API route.
+              </span>
+            </div>
+          </div>
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">Deadline → Readiness checklist</span>
+          </div>
+        </div>
+
+        <!-- Block E2: Milestones + Checklist -->
+        <div class="flow-node learning-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">2</span>
+            <span class="flow-node-tag">Action Plan</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">Content they see next</span>
+              <p class="context-text">
+                With deadline confirmed, they need a structured plan. Implementation
+                checklist + milestone timeline provide the urgency + clarity they need.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <SectionHeader
+                eyebrow="Upcoming Milestones"
+                title="Belgium E-Invoicing Timeline"
+                size="sm"
+              />
+              <div class="milestone-list">
+                {belgium.upcomingMilestones?.map(m => (
+                  <div class="milestone-item">
+                    <div class="milestone-date">{m.date}</div>
+                    <div class="milestone-info">
+                      <div class="milestone-phase">{m.phase}</div>
+                      <div class="milestone-desc">{m.description}</div>
+                    </div>
+                    {m.isMandatory && <StatusBadge status="mandatory" label="Mandatory" size="sm" />}
+                  </div>
+                ))}
+              </div>
+              <ImplementationChecklist
+                items={belgium.implementationChecklist.slice(0, 3)}
+              />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">What they learn:</span>
+              <span class="annotation-text">
+                Step-by-step plan: register on Mercurius, select UBL 2.1, connect via Peppol.
+              </span>
+            </div>
+          </div>
+          <div class="flow-connector">
+            <svg width="24" height="32" viewBox="0 0 24 32" fill="none" aria-hidden="true">
+              <path d="M12 0 L12 24 M6 18 L12 24 L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="connector-label">Checklist → Shortlist form</span>
+          </div>
+        </div>
+
+        <!-- Block E3: Urgent CTA -->
+        <div class="flow-node decision-node">
+          <div class="flow-node-label">
+            <span class="flow-node-num">3</span>
+            <span class="flow-node-tag">Conversion</span>
+          </div>
+          <div class="flow-node-card">
+            <div class="flow-node-context">
+              <span class="context-label">What they do next</span>
+              <p class="context-text">
+                Under deadline pressure, they want rapid vendor evaluation. The shortlist
+                form with timeline field captures their urgency.
+              </p>
+            </div>
+            <div class="flow-node-preview">
+              <HookCard
+                name="Provider Shortlist — Belgium"
+                description="Get matched with providers supporting Belgium UBL 2.1 + Peppol, fast."
+                ctaLabel="Request Shortlist — Urgent"
+                icon="shortlist"
+                href="/routes"
+              />
+              <HookCard
+                name="Belgium Readiness Checklist"
+                description="10-point plan to meet the Jan 2026 deadline. Download now."
+                ctaLabel="Download Checklist"
+                icon="checklist"
+                href="/countries/belgium"
+              />
+            </div>
+            <div class="flow-node-annotation">
+              <span class="annotation-label">Next step:</span>
+              <span class="annotation-text">
+                Submit form with "Within 1 month" timeline → Receive urgent-matched shortlist.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-outcome">
+        <div class="outcome-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Journey outcome
+        </div>
+        <p class="outcome-text">
+          User confirms urgency → gets structured plan → requests shortlist with immediate timeline.
+          <strong>High-intent conversion with "within 1 month" urgency.</strong>
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- FLOW DIAGRAM: Global Journey Map -->
+  <!-- ============================================================ -->
+  <section class="journey-section global-flow" id="global-flow">
+    <div class="container-site">
+      <div class="journey-header">
+        <div class="journey-tag neutral">
+          <span class="journey-tag-dot"></span>
+          Global
+        </div>
+        <h2 class="journey-title">Global Journey Flow Diagram</h2>
+        <p class="journey-desc">
+          All five user journeys converge on the same conversion point: the provider
+          shortlist form. The diagram below shows how each path leads there.
+        </p>
+      </div>
+
+      <div class="global-diagram">
+        <!-- Entry points -->
+        <div class="flow-stage">
+          <h3 class="stage-title">Entry Points</h3>
+          <div class="entry-points">
+            <div class="entry-point accent">
+              <span class="entry-label">A</span>
+              <span class="entry-text">Country Page</span>
+              <span class="entry-search">"France e-invoice mandate"</span>
+            </div>
+            <div class="entry-point teal">
+              <span class="entry-label">B</span>
+              <span class="entry-text">Standard Page</span>
+              <span class="entry-search">"Peppol BIS 3 explained"</span>
+            </div>
+            <div class="entry-point amber">
+              <span class="entry-label">C</span>
+              <span class="entry-text">ERP Page</span>
+              <span class="entry-search">"SAP e-invoice Germany"</span>
+            </div>
+            <div class="entry-point indigo">
+              <span class="entry-label">D</span>
+              <span class="entry-text">Route Page</span>
+              <span class="entry-search">"e-invoice provider Belgium"</span>
+            </div>
+            <div class="entry-point rose">
+              <span class="entry-label">E</span>
+              <span class="entry-text">Country (Urgency)</span>
+              <span class="entry-search">"Belgium mandate 2026"</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flow arrows -->
+        <div class="flow-arrows">
+          <svg viewBox="0 0 80 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="arrow-svg" aria-hidden="true">
+            <!-- Paths from entry to middle -->
+            <path d="M40 30 L40 60 M30 52 L40 62 L50 52" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M40 95 L40 125 M30 117 L40 127 L50 117" stroke="var(--color-teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M40 160 L40 190 M30 182 L40 192 L50 182" stroke="var(--color-amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M40 225 L40 255 M30 247 L40 257 L50 247" stroke="var(--color-indigo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M40 290 L40 320 M30 312 L40 322 L50 312" stroke="var(--color-rose)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Converge -->
+            <path d="M40 355 L40 385 M30 377 L40 387 L50 377" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Content layers -->
+        <div class="flow-stage">
+          <h3 class="stage-title">Content Layer</h3>
+          <div class="content-layers">
+            <div class="content-layer">
+              <div class="layer-card">
+                <span class="layer-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </span>
+                <div class="layer-text">
+                  <strong>Mandate details</strong>
+                  <span>Status, formats, deadlines</span>
+                </div>
+              </div>
+              <div class="layer-card">
+                <span class="layer-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                </span>
+                <div class="layer-text">
+                  <strong>Standard reference</strong>
+                  <span>Format specs, BT codes, validation</span>
+                </div>
+              </div>
+              <div class="layer-card">
+                <span class="layer-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </span>
+                <div class="layer-text">
+                  <strong>ERP implementation</strong>
+                  <span>Config steps, field mapping</span>
+                </div>
+              </div>
+              <div class="layer-card">
+                <span class="layer-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </span>
+                <div class="layer-text">
+                  <strong>Timeline & milestones</strong>
+                  <span>Deadlines, phases, urgency</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flow arrows 2 -->
+        <div class="flow-arrows">
+          <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="arrow-svg" aria-hidden="true">
+            <path d="M40 10 L40 70 M30 62 L40 72 L50 62" stroke="var(--color-slate-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Conversion -->
+        <div class="flow-stage">
+          <h3 class="stage-title">Conversion Point</h3>
+          <div class="conversion-point">
+            <div class="conversion-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="conversion-text">
+              <strong>Provider Shortlist Form</strong>
+              <span>Country + ERP + Route preference + Timeline → 3-5 vetted provider recommendations</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- COMPONENT REFERENCE (legacy module gallery, reduced) -->
+  <!-- ============================================================ -->
+  <section class="journey-section component-ref" id="component-reference">
+    <div class="container-site">
+      <div class="journey-header">
+        <div class="journey-tag neutral">
+          <span class="journey-tag-dot"></span>
+          Reference
+        </div>
+        <h2 class="journey-title">Component & Block Reference</h2>
+        <p class="journey-desc">
+          All UI modules used above, with their data source references and usage rules.
+        </p>
+      </div>
+
+      <div class="component-grid">
+        <!-- Status Badges -->
+        <div class="component-item">
+          <h3 class="component-name">StatusBadge</h3>
+          <div class="component-badges">
+            <StatusBadge status="active" label="Active" />
+            <StatusBadge status="mandatory" label="Mandatory" />
+            <StatusBadge status="upcoming" label="Upcoming" />
+            <StatusBadge status="voluntary" label="Voluntary" />
+            <StatusBadge status="warning" label="Warning" />
+            <StatusBadge status="info" label="Info" />
+          </div>
+          <p class="component-source">
+            Data: <code>status</code> field from <code>Country.status</code>
+          </p>
+        </div>
+
+        <!-- AISummaryBox -->
+        <div class="component-item">
+          <h3 class="component-name">AISummaryBox</h3>
+          <div class="component-preview">
+            <AISummaryBox summary={france.aiSummary} />
+          </div>
+          <p class="component-source">
+            Data: <code>aiSummary</code> from <code>Country | Standard | ERPSystem</code>
+          </p>
+        </div>
+
+        <!-- QuickAnswerBox -->
+        <div class="component-item">
+          <h3 class="component-name">QuickAnswerBox</h3>
+          <div class="component-preview">
+            <QuickAnswerBox items={france.quickAnswer} title="Quick Answers" />
+          </div>
+          <p class="component-source">
+            Data: <code>quickAnswer[]</code> from content data files
+          </p>
+        </div>
+
+        <!-- SourcesBox -->
+        <div class="component-item">
+          <h3 class="component-name">SourcesBox</h3>
+          <div class="component-preview">
+            <SourcesBox sources={france.officialSources} />
+          </div>
+          <p class="component-source">
+            Data: <code>officialSources[]</code> — structured Source[] with publisher, sourceType, lastChecked
+          </p>
+        </div>
+
+        <!-- DisclaimerBox -->
+        <div class="component-item">
+          <h3 class="component-name">DisclaimerBox</h3>
+          <div class="component-preview">
+            <DisclaimerBox />
+          </div>
+          <p class="component-source">
+            Global disclaimer from <code>siteConfig.disclaimer</code> — required on all content pages
+          </p>
+        </div>
+
+        <!-- InfoBlock -->
+        <div class="component-item">
+          <h3 class="component-name">InfoBlock</h3>
+          <div class="component-preview">
+            <InfoBlock label="Default" value="Value text" />
+            <InfoBlock label="Compact" value="Compact value" variant="compact" />
+            <InfoBlock label="Large" value="Large value" variant="large" />
+          </div>
+          <p class="component-source">
+            Data: Derived from <code>Country</code>, <code>Standard</code>, <code>ERPSystem</code> fields
+          </p>
+        </div>
+
+        <!-- HookCard -->
+        <div class="component-item">
+          <h3 class="component-name">HookCard</h3>
+          <div class="component-preview">
+            <HookCard
+              name="Country Readiness Checklist"
+              description="10-point structured readiness assessment for any country."
+              ctaLabel="Get Checklist"
+              icon="checklist"
+              href="/countries"
+            />
+          </div>
+          <p class="component-source">
+            Data: <code>ContentHook[]</code> — has <code>targetIntent</code> and <code>nextStepCta</code> fields
+          </p>
+        </div>
+
+        <!-- ImplementationChecklist -->
+        <div class="component-item">
+          <h3 class="component-name">ImplementationChecklist</h3>
+          <div class="component-preview">
+            <ImplementationChecklist
+              items={france.implementationChecklist.slice(0, 2)}
+            />
+          </div>
+          <p class="component-source">
+            Data: <code>implementationChecklist[]</code> from <code>Country | ERPSystem</code>
+          </p>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="component-item">
+          <h3 class="component-name">Breadcrumb</h3>
+          <div class="component-preview">
+            <Breadcrumb items={[
+              { label: 'Countries', href: '/countries' },
+              { label: 'France', href: '/countries/france' },
+            ]} />
+          </div>
+          <p class="component-source">
+            Dynamic: constructed per page from URL hierarchy
+          </p>
+        </div>
+
+        <!-- DeadlineBanner -->
+        <div class="component-item">
+          <h3 class="component-name">DeadlineBanner</h3>
+          <div class="component-preview">
+            <DeadlineBanner
+              country="Belgium"
+              date="2026-01-01"
+              phase="Phase 1 B2B mandate"
+              urgency="high"
+            />
+          </div>
+          <p class="component-source">
+            Data: <code>effectiveDate</code>, <code>mandatePhase</code>, <code>status</code> from <code>Country</code>
+          </p>
+        </div>
+
+        <!-- ProviderRouteBox -->
+        <div class="component-item">
+          <h3 class="component-name">ProviderRouteBox</h3>
+          <div class="component-preview">
+            <ProviderRouteBox route={peppolRoute} />
+          </div>
+          <p class="component-source">
+            Data: <code>ProviderRoute[]</code> from <code>providers.ts</code> — has <code>officialSources[]</code>
+          </p>
+        </div>
+
+        <!-- ShortlistForm -->
+        <div class="component-item">
+          <h3 class="component-name">ShortlistForm</h3>
+          <div class="component-preview">
+            <ShortlistForm />
+          </div>
+          <p class="component-source">
+            Form fields from <code>ContentHook.h3-provider-shortlist.formFields</code>
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Data Source Summary Table -->
+      <div class="data-source-table">
+        <h3 class="table-title">Data Source → Component Mapping</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Content Type</th>
+              <th>File</th>
+              <th>Key Fields for UI</th>
+              <th>Journey Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Country</td>
+              <td><code>countries.ts</code></td>
+              <td><code>status</code>, <code>formats[]</code>, <code>mandatePhase</code>, <code>officialSources[]</code>, <code>relatedStandards[]</code>, <code>primaryHook</code></td>
+              <td>Entry point A, E</td>
+            </tr>
+            <tr>
+              <td>Standard</td>
+              <td><code>standards.ts</code></td>
+              <td><code>shortName</code>, <code>category</code>, <code>countriesUsing[]</code>, <code>officialSources[]</code>, <code>relatedCountries[]</code></td>
+              <td>Entry point B</td>
+            </tr>
+            <tr>
+              <td>ERP System</td>
+              <td><code>erpSystems.ts</code></td>
+              <td><code>name</code>, <code>nativeEInvoiceSupport</code>, <code>applicableCountries[]</code>, <code>officialSources[]</code>, <code>relatedCountries[]</code>, <code>relatedStandards[]</code></td>
+              <td>Entry point C</td>
+            </tr>
+            <tr>
+              <td>Provider Route</td>
+              <td><code>providers.ts</code></td>
+              <td><code>name</code>, <code>complexity</code>, <code>countriesApplicable[]</code>, <code>officialSources[]</code>, <code>relatedCountrySlugs[]</code>, <code>relatedStandardSlugs[]</code></td>
+              <td>Conversion layer (all paths)</td>
+            </tr>
+            <tr>
+              <td>Content Hook</td>
+              <td><code>contentHooks.ts</code></td>
+              <td><code>name</code>, <code>ctaLabel</code>, <code>targetIntent</code>, <code>nextStepCta</code>, <code>formFields[]</code></td>
+              <td>Conversion trigger (all paths)</td>
+            </tr>
+            <tr>
+              <td>User Journey</td>
+              <td><code>userJourneys.ts</code></td>
+              <td><code>searchIntent</code>, <code>entryPage</code>, <code>entryReason</code>, <code>nextClick</code>, <code>conversionPoint</code></td>
+              <td>UI annotation & documentation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+</BaseLayout>
+
+<style>
+  /* ================================================================
+     PLAYGROUND PAGE — Journey Visualization Styles
+     ================================================================ */
+
+  .playground-page {
+    background: var(--color-paper);
+  }
+
+  /* Banner */
+  .playground-banner {
+    background: var(--color-slate-900);
+    padding: var(--space-6) 0;
+    margin-bottom: var(--space-12);
+  }
+
+  .banner-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .banner-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent-light);
+  }
+
+  .banner-desc {
+    font-size: var(--text-sm);
+    color: var(--color-slate-400);
+    margin: 0;
+    max-width: 720px;
+    line-height: var(--leading-relaxed);
+  }
+
+  .journey-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-slate-400);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .legend-accent { background: var(--color-accent); }
+  .legend-teal { background: var(--color-teal); }
+  .legend-amber { background: var(--color-amber); }
+  .legend-indigo { background: var(--color-indigo); }
+  .legend-rose { background: var(--color-rose); }
+  .legend-neutral { background: var(--color-slate-400); }
+
+  /* Journey Section */
+  .journey-section {
+    padding: var(--space-16) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .journey-section:last-child {
+    border-bottom: none;
+  }
+
+  .journey-section.global-flow {
+    background: var(--color-slate-950);
+  }
+
+  /* Journey Header */
+  .journey-header {
+    margin-bottom: var(--space-10);
+  }
+
+  .journey-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-4);
+  }
+
+  .journey-tag.accent { background: var(--color-accent-light); color: var(--color-accent); }
+  .journey-tag.teal { background: #d0f5f0; color: #0d7a6b; }
+  .journey-tag.amber { background: #fef3c7; color: #92400e; }
+  .journey-tag.indigo { background: #e0e7ff; color: #3730a3; }
+  .journey-tag.rose { background: #ffe4e6; color: #9f1239; }
+  .journey-tag.neutral { background: var(--color-slate-200); color: var(--color-slate-600); }
+
+  .journey-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .journey-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .journey-search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-1) var(--space-3);
+  }
+
+  .journey-search code {
+    font-family: var(--font-mono);
+    color: var(--color-slate-600);
+  }
+
+  .search-icon {
+    color: var(--color-slate-400);
+    display: flex;
+  }
+
+  .entry-page {
+    font-size: var(--text-xs);
+    font-family: var(--font-mono);
+    color: var(--color-slate-500);
+    background: var(--color-slate-100);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  .journey-title {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--color-slate-900);
+    margin: 0 0 var(--space-2);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .journey-persona {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent);
+    margin: 0 0 var(--space-3);
+  }
+
+  .journey-desc {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    margin: 0;
+    line-height: var(--leading-relaxed);
+    max-width: 640px;
+  }
+
+  /* Flow Blocks */
+  .flow-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .flow-node {
+    position: relative;
+  }
+
+  .flow-node-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .flow-node-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-slate-200);
+    color: var(--color-slate-600);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+  }
+
+  .entry-node .flow-node-num { background: var(--color-accent-light); color: var(--color-accent); }
+  .learning-node .flow-node-num { background: #d0f5f0; color: #0d7a6b; }
+  .decision-node .flow-node-num { background: var(--color-slate-100); color: var(--color-slate-700); }
+
+  .flow-node-tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-500);
+  }
+
+  .flow-node-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .entry-node .flow-node-card { border-left: 3px solid var(--color-accent); }
+  .learning-node .flow-node-card { border-left: 3px solid #0d7a6b; }
+  .decision-node .flow-node-card { border-left: 3px solid var(--color-slate-400); }
+
+  .flow-node-context {
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-paper-warm);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--color-slate-300);
+  }
+
+  .context-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-500);
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+
+  .context-text {
+    font-size: var(--text-xs);
+    color: var(--color-slate-600);
+    margin: 0;
+    line-height: var(--leading-relaxed);
+  }
+
+  .flow-node-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .flow-node-annotation {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-accent-light);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--color-accent);
+    font-size: var(--text-xs);
+  }
+
+  .annotation-label {
+    font-weight: 700;
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+
+  .annotation-text {
+    color: var(--color-slate-700);
+    line-height: var(--leading-snug);
+  }
+
+  /* Flow Connector */
+  .flow-connector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) 0 var(--space-3) var(--space-6);
+    color: var(--color-slate-400);
+  }
+
+  .flow-connector svg {
+    flex-shrink: 0;
+  }
+
+  .connector-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-400);
+  }
+
+  /* Journey Outcome */
+  .journey-outcome {
+    margin-top: var(--space-8);
+    padding: var(--space-4) var(--space-5);
+    background: var(--color-slate-950);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .outcome-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-400);
+    white-space: nowrap;
+  }
+
+  .outcome-text {
+    font-size: var(--text-sm);
+    color: var(--color-slate-300);
+    margin: 0;
+    line-height: var(--leading-relaxed);
+  }
+
+  /* Mini layouts inside journey nodes */
+  .mini-card-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    max-width: 480px;
+  }
+
+  .country-grid-demo {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+  }
+
+  .country-hero.mini {
+    padding: var(--space-4);
+    background: var(--color-paper-warm);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-3);
+  }
+
+  .country-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-1);
+  }
+
+  .country-title-sm {
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--color-slate-950);
+    margin: 0;
+  }
+
+  .country-phase-sm {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    margin: 0;
+  }
+
+  .route-matrix {
+    overflow-x: auto;
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .comparison-table th {
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-500);
+    border-bottom: 2px solid var(--color-border);
+    background: var(--color-paper-warm);
+  }
+
+  .comparison-table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border-subtle);
+    font-size: var(--text-sm);
+    color: var(--color-slate-700);
+  }
+
+  .comparison-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .complexity-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    text-transform: capitalize;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .complexity-low { background: var(--color-status-active-bg); color: var(--color-status-active); }
+  .complexity-medium { background: var(--color-status-upcoming-bg); color: var(--color-status-upcoming); }
+  .complexity-high { background: var(--color-status-warning-bg); color: var(--color-status-warning); }
+
+  /* Milestone list */
+  .milestone-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .milestone-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-paper-warm);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--color-border);
+  }
+
+  .milestone-date {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--color-slate-500);
+    white-space: nowrap;
+    min-width: 100px;
+    padding-top: 2px;
+  }
+
+  .milestone-phase {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-slate-800);
+  }
+
+  .milestone-desc {
+    font-size: var(--text-xs);
+    color: var(--color-slate-500);
+    margin-top: 2px;
+  }
+
+  .milestone-info {
+    flex: 1;
+  }
+
+  /* Global Flow Diagram */
+  .global-diagram {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto;
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .stage-title {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-500);
+    margin: 0 0 var(--space-4);
+  }
+
+  .entry-points {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .entry-point {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    border-left: 3px solid;
+  }
+
+  .entry-point.accent { border-left-color: var(--color-accent); }
+  .entry-point.teal { border-left-color: #0d7a6b; }
+  .entry-point.amber { border-left-color: #92400e; }
+  .entry-point.indigo { border-left-color: #3730a3; }
+  .entry-point.rose { border-left-color: #9f1239; }
+
+  .entry-label {
+    font-size: 10px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--color-slate-500);
+    width: 16px;
+  }
+
+  .entry-text {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-slate-800);
+    flex: 1;
+  }
+
+  .entry-search {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--color-slate-400);
+    display: none;
+  }
+
+  .flow-arrows {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0;
+  }
+
+  .arrow-svg {
+    width: 40px;
+    height: auto;
+    color: var(--color-slate-600);
+  }
+
+  .content-layers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .layer-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .layer-icon {
+    color: var(--color-slate-400);
+    display: flex;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .layer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .layer-text strong {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-slate-800);
+  }
+
+  .layer-text span {
+    font-size: 11px;
+    color: var(--color-slate-500);
+  }
+
+  .conversion-point {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: var(--color-accent-light);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-xl);
+  }
+
+  .conversion-icon {
+    color: var(--color-accent);
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+
+  .conversion-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .conversion-text strong {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .conversion-text span {
+    font-size: var(--text-xs);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+  }
+
+  /* Component Reference */
+  .component-ref {
+    background: var(--color-paper-warm);
+  }
+
+  .component-ref .journey-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .component-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+    margin-bottom: var(--space-10);
+  }
+
+  .component-item {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .component-name {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-slate-800);
+    margin: 0;
+    font-family: var(--font-mono);
+  }
+
+  .component-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .component-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .component-source {
+    font-size: var(--text-xs);
+    color: var(--color-slate-500);
+    margin: 0;
+    line-height: var(--leading-relaxed);
+  }
+
+  .component-source code {
+    font-family: var(--font-mono);
+    background: var(--color-slate-100);
+    padding: 1px 4px;
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+  }
+
+  /* Data Source Table */
+  .data-source-table {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    overflow-x: auto;
+  }
+
+  .table-title {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-slate-800);
+    margin: 0 0 var(--space-5);
+  }
+
+  .data-source-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .data-source-table th {
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-500);
+    border-bottom: 2px solid var(--color-border);
+    background: var(--color-paper-warm);
+  }
+
+  .data-source-table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border-subtle);
+    font-size: var(--text-sm);
+    color: var(--color-slate-700);
+    vertical-align: top;
+  }
+
+  .data-source-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .data-source-table td:first-child {
+    font-weight: 600;
+    color: var(--color-slate-800);
+  }
+
+  .data-source-table code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--color-slate-100);
+    padding: 1px 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .component-grid { grid-template-columns: repeat(2, 1fr); }
+    .global-diagram {
+      grid-template-columns: 1fr;
+    }
+    .flow-arrows { display: none; }
+  }
+
+  @media (max-width: 640px) {
+    .component-grid { grid-template-columns: 1fr; }
+    .country-grid-demo { grid-template-columns: repeat(2, 1fr); }
+    .entry-search { display: none; }
+  }
+</style>

@@ -1,0 +1,157 @@
+---
+// Header — EInvoiceAtlas site header
+import type { NavItem } from '../../data/site';
+
+export interface Props {
+  siteName: string;
+  navigation: NavItem[];
+}
+
+const { siteName, navigation } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container-site header-inner">
+    <a href="/" class="site-logo" aria-label={`${siteName} — Home`}>
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="6" fill="#92400E"/>
+        <rect x="6" y="8" width="16" height="2" rx="1" fill="#FAF8F4"/>
+        <rect x="6" y="13" width="12" height="2" rx="1" fill="#FAF8F4"/>
+        <rect x="6" y="18" width="14" height="2" rx="1" fill="#FAF8F4"/>
+      </svg>
+      <span class="logo-text">{siteName}</span>
+    </a>
+
+    <nav class="main-nav" aria-label="Main navigation">
+      <ul class="nav-list">
+        {navigation.map((item) => {
+          const isActive = currentPath.startsWith(item.href);
+          return (
+            <li>
+              <a
+                href={item.href}
+                class:list={['nav-link', { 'nav-link-active': isActive }]}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a href="/routes" class="btn-header-cta">
+        Find Your Route
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250, 248, 244, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    height: 64px;
+  }
+
+  .site-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-slate-900);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .main-nav {
+    flex: 1;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-link {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-slate-600);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: color var(--transition-fast), background var(--transition-fast);
+  }
+
+  .nav-link:hover {
+    color: var(--color-slate-900);
+    background: var(--color-slate-100);
+  }
+
+  .nav-link-active {
+    color: var(--color-slate-900);
+    font-weight: 600;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
+  }
+
+  .btn-header-cta {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-surface);
+    background: var(--color-accent);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+
+  .btn-header-cta:hover {
+    background: var(--color-accent-hover);
+    color: var(--color-surface);
+  }
+
+  @media (max-width: 768px) {
+    .header-inner {
+      gap: var(--space-4);
+    }
+
+    .main-nav {
+      display: none;
+    }
+
+    .logo-text {
+      font-size: var(--text-base);
+    }
+  }
+</style>

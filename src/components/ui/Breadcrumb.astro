@@ -1,0 +1,81 @@
+---
+// Breadcrumb — EInvoiceAtlas breadcrumb navigation
+export interface Props {
+  items: { label: string; href?: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb-list">
+    <li>
+      <a href="/" class="breadcrumb-item breadcrumb-home">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </a>
+    </li>
+    {items.map((item, index) => (
+      <>
+        <li class="breadcrumb-separator" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </li>
+        <li>
+          {item.href ? (
+            <a href={item.href} class="breadcrumb-item">{item.label}</a>
+          ) : (
+            <span class="breadcrumb-item breadcrumb-current" aria-current="page">{item.label}</span>
+          )}
+        </li>
+      </>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    margin-bottom: var(--space-6);
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb-separator {
+    display: flex;
+    align-items: center;
+    color: var(--color-slate-300);
+  }
+
+  .breadcrumb-item {
+    font-size: var(--text-sm);
+    color: var(--color-slate-500);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: color var(--transition-fast);
+  }
+
+  .breadcrumb-home {
+    color: var(--color-slate-400);
+  }
+
+  .breadcrumb-home:hover {
+    color: var(--color-accent);
+  }
+
+  .breadcrumb-current {
+    color: var(--color-slate-700);
+    font-weight: 500;
+  }
+</style>

@@ -1,0 +1,752 @@
+---
+// Country detail page — dynamic route
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import StatusBadge from '../../components/ui/StatusBadge.astro';
+import SourcesBox from '../../components/ui/SourcesBox.astro';
+import DisclaimerBox from '../../components/ui/DisclaimerBox.astro';
+import AISummaryBox from '../../components/ui/AISummaryBox.astro';
+import QuickAnswerBox from '../../components/ui/QuickAnswerBox.astro';
+import StandardCard from '../../components/cards/StandardCard.astro';
+import ERPCard from '../../components/cards/ERPCard.astro';
+import ShortlistForm from '../../components/forms/ShortlistForm.astro';
+import ImplementationChecklist from '../../components/blocks/ImplementationChecklist.astro';
+import { countries } from '../../data/countries';
+import { standards } from '../../data/standards';
+import { erpSystems } from '../../data/erpSystems';
+import { providerRoutes } from '../../data/providers';
+
+export async function getStaticPaths() {
+  return countries.map(country => ({
+    params: { slug: country.urlSlug ?? country.slug },
+    props: { country },
+  }));
+}
+
+const { country } = Astro.props;
+
+// Build quick answers — use aiSummary for richer, source-backed answers
+const quickAnswers = [
+  {
+    q: `What is the e-invoicing mandate status in ${country.name}?`,
+    a: country.mandatePhase,
+  },
+  {
+    q: `When did mandatory e-invoicing become effective in ${country.name}?`,
+    a: country.effectiveDate
+      ? `${new Date(country.effectiveDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} — enforcement ${country.enforcementStatus}`
+      : 'Mandate status under consultation. Verify current obligations with the relevant authority.',
+  },
+  {
+    q: `What e-invoice formats does ${country.name} require?`,
+    a: country.formats.length > 0
+      ? country.formats.map(f => f.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())).join(', ')
+      : 'Format specification pending — consult official guidance.',
+  },
+  {
+    q: `Who does the ${country.name} e-invoicing mandate apply to?`,
+    a: country.affectedParties.length > 0
+      ? country.affectedParties[0]
+      : 'Consult official authority guidance for scope.',
+  },
+];
+
+// Related standards
+const relatedStandards = standards.filter(s =>
+  country.relatedStandards.includes(s.slug)
+);
+
+// Related ERP systems
+const relatedErpSystems = erpSystems.filter(e =>
+  country.relatedErpSystems.includes(e.slug)
+);
+
+// Route labels and descriptions
+const routeInfo: Record<string, { label: string; description: string; href: string }> = {
+  'pepper': {
+    label: 'Peppol Network Route',
+    description: 'Send and receive invoices via the Peppol global e-delivery network using a certified access point.',
+    href: '/routes/peppol-network',
+  },
+  'direct-api': {
+    label: 'Direct API / Government Portal Route',
+    description: 'Transmit invoices directly via the country\'s government platform or API without a Peppol intermediary.',
+    href: '/routes/direct-api',
+  },
+  'clearing-house': {
+    label: 'Clearing House / PDP Route',
+    description: 'Route invoices through a certified intermediary or Peppol-ready service provider.',
+    href: '/routes/clearing-house',
+  },
+  'portal': {
+    label: 'Government Portal Route',
+    description: 'Submit invoices via the official government e-invoicing portal directly.',
+    href: '/routes/direct-api',
+  },
+  'hybrid': {
+    label: 'Hybrid / Multi-Route Approach',
+    description: 'Combine multiple transmission routes depending on recipient type and country.',
+    href: '/routes/hybrid',
+  },
+};
+
+const activeRoutes = country.routeTypes
+  .map(r => routeInfo[r])
+  .filter(Boolean);
+
+// Breadcrumb items
+const breadcrumbItems = [
+  { label: 'Countries', href: '/countries' },
+  { label: country.name },
+];
+
+// Meta
+const metaDescription = `${country.name} e-invoicing: ${country.mandatePhase}. Effective ${country.effectiveDate ? new Date(country.effectiveDate).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : 'under consultation'}. Formats: ${country.formats.map(f => f.replace(/-/g, ' ')).join(', ')}. Source-backed regulatory intelligence.`;
+
+const statusMap: Record<string, 'active' | 'mandatory' | 'upcoming' | 'voluntary' | 'phasing'> = {
+  active: 'active',
+  mandatory: 'mandatory',
+  upcoming: 'upcoming',
+  voluntary: 'voluntary',
+  phasing: 'phasing',
+};
+
+const formatLabels: Record<string, string> = {
+  'factur-x': 'Factur-X',
+  'ubl-2.1': 'UBL 2.1',
+  'xrechnung': 'XRechnung',
+  'fattura-pa': 'FatturaPA',
+  'facturae': 'FacturaE',
+  'simpler-invoice': 'SimplerInvoice',
+};
+
+const formatNames = country.formats.map(f => formatLabels[f] ?? f.toUpperCase());
+
+const enforcementStatusLabel: Record<string, string> = {
+  strict: 'Strict enforcement',
+  lenient: 'Lenient / grace period active',
+  upcoming: 'Upcoming enforcement',
+  unknown: 'Enforcement status varies',
+};
+
+const milestoneStatusLabel = (isMandatory: boolean) =>
+  isMandatory ? 'Mandatory' : 'Planned';
+---
+
+<BaseLayout
+  title={`${country.name} E-Invoicing Mandate`}
+  description={metaDescription}
+>
+  <div class="container-content page-country">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <div class="country-header">
+      <div class="country-title-row">
+        <div class="country-flag-code">
+          <span class="country-code-label">{country.isoCode}</span>
+        </div>
+        <div class="country-titles">
+          <h1 class="country-h1">{country.name} E-Invoicing Mandate</h1>
+          <StatusBadge status={statusMap[country.status] ?? 'info'} size="md" />
+        </div>
+      </div>
+
+      <p class="country-mandate-phase">{country.mandatePhase}</p>
+
+      <div class="country-meta-row">
+        {country.effectiveDate && (
+          <div class="meta-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>Mandatory since: {new Date(country.effectiveDate).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</span>
+          </div>
+        )}
+        {country.enforcementDate && (
+          <div class="meta-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span>Enforcement active: {new Date(country.enforcementDate).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</span>
+          </div>
+        )}
+        <div class="meta-chip">
+          <span>Enforcement: {enforcementStatusLabel[country.enforcementStatus] ?? country.enforcementStatus}</span>
+        </div>
+        {formatNames.length > 0 && (
+          <div class="meta-chip">
+            <span>Required formats: {formatNames.join(', ')}</span>
+          </div>
+        )}
+        {country.turnoverThreshold && (
+          <div class="meta-chip meta-threshold">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            <span>Threshold: {country.turnoverThreshold}</span>
+          </div>
+        )}
+      </div>
+    </div>
+
+    {country.aiSummary && (
+      <AISummaryBox summary={country.aiSummary} />
+    )}
+
+    <QuickAnswerBox items={quickAnswers} />
+
+    <div class="country-content-grid">
+      <div class="country-main">
+
+        {country.affectedParties.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Who Is Affected</h2>
+            <ul class="affected-list">
+              {country.affectedParties.map(party => (
+                <li class="affected-item">{party}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {country.invoiceTypes.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Invoice Types in Scope</h2>
+            <div class="invoice-type-chips">
+              {country.invoiceTypes.map(type => (
+                <span class="invoice-chip">{type}</span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {activeRoutes.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Transmission Routes</h2>
+            <p class="section-intro">
+              Businesses operating in {country.name} can transmit e-invoices through one or more of the following routes, depending on the recipient type and technical infrastructure.
+            </p>
+            <div class="route-cards">
+              {activeRoutes.map(route => (
+                <a href={route.href} class="route-card">
+                  <div class="route-card-header">
+                    <span class="route-card-name">{route.label}</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </div>
+                  <p class="route-card-desc">{route.description}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {country.commonMistakes && country.commonMistakes.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Common Mistakes to Avoid</h2>
+            <ul class="mistakes-list">
+              {country.commonMistakes.map(mistake => (
+                <li class="mistake-item">{mistake}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {(country.upcomingMilestones ?? []).length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">Upcoming Milestones</h2>
+            <div class="milestones-list">
+              {(country.upcomingMilestones ?? []).map(milestone => (
+                <div class="milestone-item">
+                  <div class="milestone-header">
+                    <div class="milestone-date">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                      <span>{new Date(milestone.date).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</span>
+                    </div>
+                    <span class:list={['milestone-status', milestone.isMandatory ? 'mandatory' : 'planned']}>
+                      {milestoneStatusLabel(milestone.isMandatory)}
+                    </span>
+                  </div>
+                  <div class="milestone-body">
+                    <strong class="milestone-phase">{milestone.phase}</strong>
+                    <p class="milestone-desc">{milestone.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+
+      <div class="country-sidebar">
+        {country.implementationChecklist.length > 0 && (
+          <ImplementationChecklist
+            items={country.implementationChecklist}
+            title="Implementation Checklist"
+            showCategory={true}
+          />
+        )}
+
+        <div class="route-cta">
+          <h2 class="section-h2">Need a Provider Shortlist?</h2>
+          <p class="route-cta-desc">
+            Tell us your ERP, countries of operation, and transaction volume. We'll match you with vetted providers familiar with {country.name}'s requirements.
+          </p>
+          <ShortlistForm compact={true} />
+        </div>
+      </div>
+    </div>
+
+    {relatedStandards.length > 0 && (
+      <section class="related-section">
+        <h2 class="section-h2">E-Invoice Standards for {country.name}</h2>
+        <div class="related-grid">
+          {relatedStandards.map(standard => (
+            <StandardCard
+              slug={standard.urlSlug ?? standard.slug}
+              name={standard.shortName}
+              shortName={standard.shortName}
+              category={standard.category}
+              governingBody={standard.governingBody}
+              countriesUsing={standard.countriesUsing}
+              isPeppolBased={standard.isPeppolBased}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {relatedErpSystems.length > 0 && (
+      <section class="related-section">
+        <h2 class="section-h2">ERP Systems for {country.name}</h2>
+        <div class="related-grid">
+          {relatedErpSystems.map(erp => (
+            <ERPCard
+              slug={erp.urlSlug ?? erp.slug}
+              name={erp.name}
+              vendor={erp.vendor}
+              category={erp.category}
+              nativeEInvoiceSupport={erp.nativeEInvoiceSupport}
+              applicableCountries={erp.applicableCountries}
+              configurationComplexity={erp.configurationComplexity}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {country.officialSources.length > 0 && (
+      <SourcesBox sources={country.officialSources} />
+    )}
+
+    <div class="page-footer-meta">
+      <p class="last-reviewed">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Last reviewed: {country.lastReviewed}
+      </p>
+    </div>
+
+    <DisclaimerBox />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-country {
+    padding: var(--space-8) 0 var(--space-20);
+  }
+
+  .country-header {
+    margin-bottom: var(--space-10);
+  }
+
+  .country-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .country-flag-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    background: var(--color-accent-light);
+    border-radius: var(--radius-lg);
+    flex-shrink: 0;
+  }
+
+  .country-code-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .country-titles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: flex-start;
+  }
+
+  .country-h1 {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--color-slate-950);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    margin: 0;
+  }
+
+  .country-mandate-phase {
+    font-size: var(--text-lg);
+    color: var(--color-slate-600);
+    margin: 0 0 var(--space-5);
+    line-height: var(--leading-relaxed);
+  }
+
+  .country-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-slate-700);
+    background: var(--color-slate-50);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border-subtle);
+  }
+
+  .meta-chip svg {
+    color: var(--color-slate-400);
+    flex-shrink: 0;
+  }
+
+  .meta-threshold {
+    background: var(--color-accent-light);
+    border-color: rgba(5, 96, 173, 0.15);
+  }
+
+  .meta-threshold svg {
+    color: var(--color-accent);
+  }
+
+  .country-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-10);
+    margin: var(--space-10) 0;
+  }
+
+  @media (max-width: 900px) {
+    .country-content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .country-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+
+  .country-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .content-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .section-h2 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-slate-900);
+    letter-spacing: var(--tracking-tight);
+    margin: 0;
+    padding-bottom: var(--space-3);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .section-intro {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+
+  .affected-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .affected-item {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    padding-left: var(--space-5);
+    position: relative;
+  }
+
+  .affected-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+    border-radius: 50%;
+  }
+
+  .invoice-type-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .invoice-chip {
+    font-size: 11px;
+    font-weight: 700;
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-accent-light);
+    color: var(--color-accent);
+    border-radius: var(--radius-full);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+  }
+
+  .route-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .route-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .route-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .route-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .route-card-name {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-slate-900);
+  }
+
+  .route-card-header svg {
+    color: var(--color-slate-400);
+    transition: color var(--transition-fast);
+  }
+
+  .route-card:hover .route-card-header svg {
+    color: var(--color-accent);
+  }
+
+  .route-card-desc {
+    font-size: var(--text-sm);
+    color: var(--color-slate-500);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+
+  .mistakes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .mistake-item {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    padding-left: var(--space-5);
+    position: relative;
+  }
+
+  .mistake-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background: var(--color-status-warning);
+    border-radius: 50%;
+  }
+
+  .milestones-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .milestone-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .milestone-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .milestone-date {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-slate-700);
+  }
+
+  .milestone-date svg {
+    color: var(--color-slate-400);
+  }
+
+  .milestone-status {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+  }
+
+  .milestone-status.mandatory {
+    background: var(--color-status-critical-bg);
+    color: var(--color-status-critical);
+  }
+
+  .milestone-status.planned {
+    background: var(--color-status-upcoming-bg);
+    color: var(--color-status-upcoming);
+  }
+
+  .milestone-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .milestone-phase {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-slate-800);
+  }
+
+  .milestone-desc {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+
+  .route-cta {
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .route-cta-desc {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    margin: 0;
+    line-height: var(--leading-relaxed);
+  }
+
+  .related-section {
+    margin-top: var(--space-10);
+    padding-top: var(--space-10);
+    border-top: 2px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .page-footer-meta {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .last-reviewed {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-slate-400);
+    margin: 0;
+  }
+</style>

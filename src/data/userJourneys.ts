@@ -1,0 +1,141 @@
+// ============================================================
+// EInvoiceAtlas — User Journeys Data
+// Each journey is mapped to specific entry/search intent pairs.
+// ============================================================
+
+import type { UserJourney } from './types';
+
+export const userJourneys: UserJourney[] = [
+  {
+    id: 'path-a-country-regulation',
+    name: 'Country Regulation Entry',
+    persona: 'CFO / Finance Lead / Tax Manager',
+    searchIntent: '"France e-invoicing mandate 2026"',
+    entryPage: '/countries/france',
+    entryReason: 'User found a country-specific page that directly addresses their search query about French e-invoicing obligations.',
+    firstView: [
+      'AI Summary box — 3-5 sentence synthesis',
+      'Status badge — "Mandatory, Phase 2"',
+      'Quick Answer — "Do I need to comply?"',
+      '"Who is affected" section',
+    ],
+    problemSolved: 'User knows whether their business is affected by France\'s e-invoicing mandate and when the deadline is.',
+    nextClick: '"Required formats and standards" → Standard reference',
+    destinationPage: '/standards/factur-x',
+    conversionPoint: 'Request Provider Shortlist / Download Readiness Checklist',
+    whyThisPath: 'User is in evaluation mode — they found a credible, structured source that gives them clarity on their obligation, and naturally moves to understand the format requirements before deciding on next steps.',
+  },
+  {
+    id: 'path-b-standard-understanding',
+    name: 'Standard Understanding Entry',
+    persona: 'Tax / Compliance Manager / ERP Implementation Owner',
+    searchIntent: '"Peppol BIS 3 explained"',
+    entryPage: '/standards/peppol-bis-3',
+    entryReason: 'User is trying to understand what Peppol BIS 3 is, how it relates to EN 16931, and where it applies.',
+    firstView: [
+      'AI Summary — What Peppol BIS 3 is',
+      'Quick Answer — Peppol vs EN 16931 vs UBL',
+      'What it is / Where it is used',
+    ],
+    problemSolved: 'User understands Peppol as a network/infrastructure (not just a format) and knows which countries use it.',
+    nextClick: '"Countries using Peppol BIS 3" → Country grid filtered to Peppol countries',
+    destinationPage: '/countries?standard=peppol-bis-3',
+    conversionPoint: 'Country page → Implementation Checklist → Provider Shortlist',
+    whyThisPath: 'Standard page provides the conceptual foundation. Countries using the standard provide the operational context. The natural next step is to understand requirements for a specific country.',
+  },
+  {
+    id: 'path-c-erp-implementation',
+    name: 'ERP Implementation Entry',
+    persona: 'ERP / Implementation Owner',
+    searchIntent: '"Odoo e-invoicing Germany"',
+    entryPage: '/erp/odoo',
+    entryReason: 'User manages Odoo ERP and needs to understand how to configure it for German e-invoicing requirements.',
+    firstView: [
+      'ERP Quick Answer — native Odoo capability for e-invoicing',
+      'Applicable Countries section',
+      'Standards Involved — XRechnung / EN 16931',
+    ],
+    problemSolved: 'User knows Odoo\'s native e-invoicing capability, which formats it supports, and which countries it affects.',
+    nextClick: '"Germany XRechnung requirements" → Germany country page',
+    destinationPage: '/countries/germany',
+    conversionPoint: 'Implementation Checklist → Provider Shortlist Request',
+    whyThisPath: 'ERP owner is technical — they want to confirm Odoo\'s capability against Germany\'s specific requirements, then get a structured implementation plan and vendor shortlist.',
+  },
+  {
+    id: 'path-d-purchase-intent',
+    name: 'Purchase Intent Entry',
+    persona: 'Finance Lead / ERP Owner / Consultant',
+    searchIntent: '"best e-invoicing provider Belgium"',
+    entryPage: '/routes',
+    entryReason: 'User is looking for vendor options but has been educated (through search results or prior reading) that route selection comes first.',
+    firstView: [
+      'Hero — "Choose Your Route Before Your Provider"',
+      'Route decision aid — 4 questions',
+      'Route type explanations',
+    ],
+    problemSolved: 'User understands that Peppol, API, and Portal are different routes with different implications — and that vendor selection follows route determination.',
+    nextClick: '"Belgium e-invoicing requirements" → Belgium country page OR "Request Provider Shortlist" form',
+    destinationPage: '/countries/belgium',
+    conversionPoint: 'Submit Provider Shortlist Request (collecting: Country, ERP, Route preference)',
+    whyThisPath: 'Purchase-intent users are often seduced by vendor lists without understanding route. This page educates first, then converts. The Belgian mandate deadline creates urgency that drives form submission.',
+  },
+  {
+    id: 'path-e-time-pressured',
+    name: 'Time-Pressured Entry',
+    persona: 'CFO / Finance Lead / ERP Owner',
+    searchIntent: '"Belgium e-invoicing 2026 deadline"',
+    entryPage: '/countries/belgium',
+    entryReason: 'User is under time pressure — Belgium\'s January 2026 mandate is approaching and they need rapid clarity.',
+    firstView: [
+      'Status badge — "Upcoming — January 2026" with critical color',
+      'AI Summary — "Phase 1 begins January 2026..."',
+      'Upcoming Milestones section',
+      '"Who is affected" — turnover threshold',
+    ],
+    problemSolved: 'User knows the exact deadline, whether their turnover puts them in Phase 1, and the consequences of missing the date.',
+    nextClick: '"Implementation checklist" → checklist block',
+    destinationPage: '/countries/belgium#checklist',
+    conversionPoint: 'Download Readiness Checklist → Provider Shortlist',
+    whyThisPath: 'Urgency-driven users need rapid clarity and immediate action. Clear deadline + checklist + shortlist is the fastest route from "I\'m affected" to "here\'s my plan."',
+  },
+  {
+    id: 'path-f-broad-intent',
+    name: 'Broad Intent / Homepage Entry',
+    persona: 'Any — primarily first-time visitor',
+    searchIntent: '"e-invoicing requirements Europe"',
+    entryPage: '/',
+    entryReason: 'User has a broad need to understand the e-invoicing landscape before focusing on a specific country, standard, or ERP.',
+    firstView: [
+      'Hero — "Global Electronic Invoice Regulatory Intelligence"',
+      'Global mandate count (e.g., "7 countries with active mandates")',
+      'Upcoming mandates section — deadline cards',
+      'Three primary browse paths: Country / Standard / ERP',
+    ],
+    problemSolved: 'User orients to the site, understands it is a regulatory intelligence platform, and identifies their relevant entry track.',
+    nextClick: 'Self-selected: Browse by Country OR Browse by Standard OR Browse by ERP OR Free Readiness Checklist',
+    destinationPage: 'Self-selected path (typically /countries or /standards)',
+    conversionPoint: 'Hook blocks on homepage (Readiness Checklist, Standard Comparison, Provider Shortlist)',
+    whyThisPath: 'Homepage functions as an intelligence hub, not a marketing page. Users self-select into their relevant track (Country / Standard / ERP) based on their primary concern.',
+  },
+  {
+    id: 'path-g-cross-border',
+    name: 'Cross-Border Determination',
+    persona: 'International Expansion Team / CFO',
+    searchIntent: '"do we need e-invoicing if selling to France"',
+    entryPage: '/countries/france',
+    entryReason: 'User is a foreign company evaluating whether France\'s mandate applies to their cross-border B2B sales.',
+    firstView: [
+      '"Who is affected" section — specifically the mention of "foreign companies issuing to French entities"',
+      'AI Summary — "Any company issuing invoices to a French entity..."',
+    ],
+    problemSolved: 'User confirms they ARE affected as a foreign seller and understands the scope (B2B and B2G, not just B2C).',
+    nextClick: '"Implementation checklist" → checklist block (checking "Chorus Pro registration" item)',
+    destinationPage: '/countries/france#checklist',
+    conversionPoint: 'Readiness Checklist → Provider Shortlist (particularly for cross-border PDP options)',
+    whyThisPath: 'Cross-border sellers often assume mandates don\'t apply to them. The "Who is affected" section specifically addresses this, then provides the implementation path.',
+  },
+];
+
+export function getJourneyById(id: string): UserJourney | undefined {
+  return userJourneys.find((j) => j.id === id);
+}

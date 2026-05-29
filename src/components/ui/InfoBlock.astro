@@ -1,0 +1,45 @@
+---
+// InfoBlock — Structured information block with label
+export interface Props {
+  label: string;
+  value: string;
+  variant?: 'default' | 'compact' | 'large';
+}
+
+const { label, value, variant = 'default' } = Astro.props;
+---
+
+<div class:list={['info-block', `variant-${variant}`]}>
+  <span class="info-label">{label}</span>
+  <span class="info-value">{value}</span>
+</div>
+
+<style>
+  .info-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .info-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-slate-500);
+  }
+
+  .info-value {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-slate-900);
+  }
+
+  .variant-compact .info-value {
+    font-size: var(--text-sm);
+  }
+
+  .variant-large .info-value {
+    font-size: var(--text-xl);
+  }
+</style>
