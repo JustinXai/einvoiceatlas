@@ -4,16 +4,20 @@ export interface Props {
   country: string;
   date: string;
   phase: string;
+  slug?: string;
   urgency?: 'high' | 'medium' | 'low';
 }
 
-const { country, date, phase, urgency = 'high' } = Astro.props;
+const { country, date, phase, slug, urgency = 'high' } = Astro.props;
 
-const formattedDate = new Date(date).toLocaleDateString('en-GB', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
+const isValidDate = date && !isNaN(Date.parse(date));
+const formattedDate = isValidDate
+  ? new Date(date).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+  : null;
 ---
 
 <div class:list={['deadline-banner', `urgency-${urgency}`]}>
@@ -26,9 +30,10 @@ const formattedDate = new Date(date).toLocaleDateString('en-GB', {
   <div class="banner-content">
     <p class="banner-label">Upcoming Mandate — {country}</p>
     <p class="banner-phase">{phase}</p>
-    <p class="banner-date">{formattedDate}</p>
+    {formattedDate && <p class="banner-date">{formattedDate}</p>}
+    {!formattedDate && <p class="banner-date banner-date-tbd">Date to be confirmed</p>}
   </div>
-  <a href={`/countries/${country.toLowerCase().replace(' ', '-')}`} class="banner-cta">
+  <a href={`/countries/${slug ?? country.toLowerCase().replace(/ /g, '-')}`} class="banner-cta">
     View Requirements
   </a>
 </div>
@@ -98,6 +103,12 @@ const formattedDate = new Date(date).toLocaleDateString('en-GB', {
 
   .urgency-high .banner-date { color: var(--color-status-critical); }
   .urgency-medium .banner-date { color: var(--color-status-warning); }
+
+  .banner-date-tbd {
+    font-style: italic;
+    color: var(--color-slate-500);
+    font-weight: 400;
+  }
 
   .banner-cta {
     flex-shrink: 0;

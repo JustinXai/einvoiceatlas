@@ -56,6 +56,7 @@ const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.
                 country={country.name}
                 date={country.effectiveDate ?? ''}
                 phase={country.mandatePhase}
+                slug={country.urlSlug ?? country.slug}
                 urgency={country.enforcementDate && new Date(country.enforcementDate) < new Date('2027-01-01') ? 'high' : 'medium'}
               />
             ))}
