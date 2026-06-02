@@ -27,6 +27,8 @@ export const standards: Standard[] = [
     category: 'regional',
     governingBody: 'CEN (European Committee for Standardization)',
     version: '1.3.1 (2020)',
+    metaTitle: 'EN 16931 Invoice Standard and CIUS Guide',
+    metaDescription: 'Guide to EN 16931 and EN16931 invoice standards: semantic model, CIUS, UBL/CII syntax, Peppol BIS 3.0, XRechnung, and Factur-X links.',
     description:
       'EN 16931 is the EU\'s semantic data model for electronic invoices. It defines what information an invoice must contain (the "what") but not how it is represented technically. It is the semantic foundation that XRechnung, Factur-X, and UBL 2.1 all implement.',
     countriesUsing: ['france', 'germany', 'belgium', 'spain', 'italy', 'netherlands', 'austria'],
@@ -244,6 +246,8 @@ export const standards: Standard[] = [
     category: 'national',
     governingBody: 'KoSIT (Koordinierungsstelle für IT-Standards, Germany)',
     version: '2.3 (2023)',
+    metaTitle: "XRechnung in English: XML Invoice Format",
+    metaDescription: "English guide to Germany's XRechnung XML invoice format: EN 16931 relationship, Leitweg-ID, validation, ERP export, and ZUGFeRD differences.",
     description:
       'XRechnung is Germany\'s national e-invoice format, mandatory for all invoices to German public authorities. It is a pure XML format based on EN 16931, with specific German extensions. Unlike ZUGFeRD (which combines PDF and XML), XRechnung is strictly XML-only.',
     countriesUsing: ['germany'],
@@ -337,6 +341,8 @@ export const standards: Standard[] = [
     category: 'national',
     governingBody: 'FeRD (Forum Elektronische Rechnung Deutschland)',
     version: '2.3.1 (2022)',
+    metaTitle: 'ZUGFeRD Invoice Format: PDF/XML and EN 16931',
+    metaDescription: 'Understand the ZUGFeRD invoice format, hybrid PDF/XML structure, EN 16931 link, Factur-X relationship, and ERP export implications.',
     description:
       'ZUGFeRD is Germany\'s hybrid e-invoice format combining a human-readable PDF/A-3 document with a machine-readable XML file embedded inside it. It is based on the EN 16931 semantic data model and is one of two dominant German e-invoice formats alongside XRechnung. ZUGFeRD is widely used in B2B workflows because the PDF provides immediate human readability while the embedded XML enables automated processing.',
     countriesUsing: ['germany'],
@@ -432,6 +438,8 @@ export const standards: Standard[] = [
     category: 'national',
     governingBody: 'AFNOR (Association Française de Normalisation)',
     version: '1.0.05 (2022)',
+    metaTitle: 'Factur-X Invoice Format: PDF/XML Guide',
+    metaDescription: 'Understand Factur-X invoice format, hybrid PDF/XML structure, ZUGFeRD relationship, EN 16931 link, France context, and ERP archive implications.',
     description:
       'Factur-X is France\'s national e-invoice format, combining a human-readable PDF/A-3 with a machine-readable XML file embedded inside it. It is one of the most widely adopted hybrid formats in Europe, balancing legal compliance with practical usability. Factur-X and ZUGFeRD share the same hybrid PDF/XML concept and the same EN 16931-based XML profile — they are essentially the same format family with different market names.',
     countriesUsing: ['france'],

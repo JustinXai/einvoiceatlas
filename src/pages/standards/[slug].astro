@@ -64,7 +64,9 @@ const breadcrumbItems = [
 ];
 
 // Meta
-const metaDescription = `${standard.shortName}: ${standard.description.slice(0, 150)}... Governing body: ${standard.governingBody}. Used in ${standard.countriesUsing.length} countries. Source-backed technical reference.`;
+const metaDescription =
+  (standard as any).metaDescription ??
+  `${standard.shortName}: ${standard.description.slice(0, 150)}... Governing body: ${standard.governingBody}. Used in ${standard.countriesUsing.length} countries. Source-backed technical reference.`;
 
 const categoryLabels: Record<string, string> = {
   universal: 'Universal',
@@ -84,7 +86,7 @@ const formatNote = standard.isPdfBased
 ---
 
 <BaseLayout
-  title={`${standard.shortName} E-Invoice Standard`}
+  title={(standard as any).metaTitle ?? `${standard.shortName} E-Invoice Standard`}
   description={metaDescription}
 >
   <div class="container-content page-standard">
