@@ -621,6 +621,8 @@ export const standards: Standard[] = [
     category: 'national',
     governingBody: 'Agenzia delle Entrate (Italian Revenue Agency)',
     version: '1.2.1 (2024)',
+    metaTitle: 'FatturaPA XML: Italy\'s Mandatory E-Invoice Format',
+    metaDescription: 'FatturaPA is Italy\'s mandatory XML e-invoice format transmitted via SDI. Guide to SDI structure, ERP export fields, EN 16931 link, and Peppol differences.',
     description:
       'FatturaPA is Italy\'s mandatory e-invoice format, the only format accepted by the SDI (Sistema di Interscambio) clearing system. It is an XML schema specifically designed for Italy\'s fiscal requirements.',
     countriesUsing: ['italy'],
