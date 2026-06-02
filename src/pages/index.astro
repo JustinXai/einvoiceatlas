@@ -16,6 +16,7 @@ import { erpSystems } from '../data/erpSystems';
 const upcomingCountries = getUpcomingCountries();
 const activeCountries = getActiveMandateCountries();
 const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.slice(0, 3)].slice(0, 6);
+const featuredStandards = standards.filter((standard) => ['zugferd', 'xrechnung', 'en-16931', 'factur-x', 'peppol-bis-3'].includes(standard.slug));
 ---
 
 <BaseLayout
@@ -23,15 +24,49 @@ const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.
   description="Navigate mandatory e-invoicing requirements by country, standard, and ERP system. Independent regulatory intelligence for finance, tax, and compliance teams."
 >
   <div class="homepage">
-
-    <!-- Hero -->
     <section class="section-hero">
       <div class="container-content">
         <Hero variant="homepage" />
       </div>
     </section>
 
-    <!-- Upcoming Mandates -->
+    <section class="section-standards-nav">
+      <div class="container-content">
+        <SectionHeader
+          eyebrow="Standards"
+          title="Standards and formats to understand first"
+          description="A concise navigation block for teams comparing invoice formats, semantic models, and routing paths."
+          size="sm"
+        />
+        <div class="standards-nav-grid">
+          <a href="/standards/zugferd/" class="standards-nav-card">
+            <strong>ZUGFeRD</strong>
+            <span>Hybrid PDF/XML invoice family</span>
+          </a>
+          <a href="/standards/xrechnung/" class="standards-nav-card">
+            <strong>XRechnung</strong>
+            <span>German XML format reference</span>
+          </a>
+          <a href="/standards/en-16931/" class="standards-nav-card">
+            <strong>EN 16931 / EN16931</strong>
+            <span>Semantic invoice model</span>
+          </a>
+          <a href="/standards/factur-x/" class="standards-nav-card">
+            <strong>Factur-X</strong>
+            <span>French hybrid invoice family</span>
+          </a>
+          <a href="/standards/peppol-bis-3/" class="standards-nav-card">
+            <strong>Peppol BIS 3.0</strong>
+            <span>Peppol invoice specification</span>
+          </a>
+          <a href="/routes/peppol-access-point/" class="standards-nav-card">
+            <strong>Peppol Access Point</strong>
+            <span>Routing and provider selection</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
     {upcomingCountries.length > 0 && (
       <section class="section-upcoming">
         <div class="container-content">
@@ -65,7 +100,6 @@ const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.
       </section>
     )}
 
-    <!-- Browse by Country -->
     <section class="section-countries">
       <div class="container-content">
         <div class="section-header-row">
@@ -88,19 +122,10 @@ const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.
             />
           ))}
         </div>
-        <div class="section-cta">
-          <a href="/countries" class="browse-all-btn">
-            Browse All Countries
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12"/>
-              <polyline points="12 5 19 12 12 19"/>
-            </svg>
-          </a>
-        </div>
+        <div class="section-cta"><a href="/countries" class="browse-all-btn">Browse All Countries</a></div>
       </div>
     </section>
 
-    <!-- Browse by Standard -->
     <section class="section-standards">
       <div class="container-content">
         <div class="section-header-row">
@@ -111,7 +136,7 @@ const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.
           />
         </div>
         <div class="standards-grid">
-          {standards.map(std => (
+          {featuredStandards.map(std => (
             <StandardCard
               slug={std.slug}
               name={std.name}
@@ -124,15 +149,10 @@ const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.
             />
           ))}
         </div>
-        <div class="section-cta">
-          <a href="/standards" class="browse-all-btn secondary">
-            Browse All Standards
-          </a>
-        </div>
+        <div class="section-cta"><a href="/standards" class="browse-all-btn secondary">Browse All Standards</a></div>
       </div>
     </section>
 
-    <!-- Browse by ERP -->
     <section class="section-erp">
       <div class="container-content">
         <div class="section-header-row">
@@ -155,15 +175,10 @@ const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.
             />
           ))}
         </div>
-        <div class="section-cta">
-          <a href="/erp" class="browse-all-btn secondary">
-            Browse All ERP Systems
-          </a>
-        </div>
+        <div class="section-cta"><a href="/erp" class="browse-all-btn secondary">Browse All ERP Systems</a></div>
       </div>
     </section>
 
-    <!-- High-Value Hooks -->
     <section class="section-hooks">
       <div class="container-content">
         <SectionHeader
@@ -173,80 +188,32 @@ const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.
           align="center"
         />
         <div class="hooks-grid">
-          <HookCard
-            name="Country Readiness Checklist"
-            description="Get a structured 10-point readiness assessment for your target country's mandate."
-            ctaLabel="Get Country Checklist"
-            icon="checklist"
-            href="/countries"
-          />
-          <HookCard
-            name="Provider Shortlist Request"
-            description="Get matched with vetted e-invoicing providers based on your country, ERP, and route."
-            ctaLabel="Request Shortlist"
-            icon="shortlist"
-            href="/routes"
-          />
-          <HookCard
-            name="Standard Comparison Brief"
-            description="Side-by-side comparison of EN 16931, Peppol BIS 3, XRechnung, Factur-X, and more."
-            ctaLabel="Download Comparison"
-            icon="comparison"
-            href="/standards"
-          />
-          <HookCard
-            name="Find Your E-Invoicing Route"
-            description="Answer 4 questions to determine whether to use Peppol, API, Portal, or Hybrid route."
-            ctaLabel="Take Decision Aid"
-            icon="route"
-            href="/routes"
-          />
+          <HookCard name="Country Readiness Checklist" description="Get a structured 10-point readiness assessment for your target country's mandate." ctaLabel="Get Country Checklist" icon="checklist" href="/countries" />
+          <HookCard name="Provider Shortlist Request" description="Get matched with vetted e-invoicing providers based on your country, ERP, and route." ctaLabel="Request Shortlist" icon="shortlist" href="/routes" />
+          <HookCard name="Standard Comparison Brief" description="Side-by-side comparison of EN 16931, Peppol BIS 3, XRechnung, Factur-X, and more." ctaLabel="Download Comparison" icon="comparison" href="/standards" />
+          <HookCard name="Find Your E-Invoicing Route" description="Answer 4 questions to determine whether to use Peppol, API, Portal, or Hybrid route." ctaLabel="Take Decision Aid" icon="route" href="/routes" />
         </div>
       </div>
     </section>
 
-    <!-- How to Use -->
     <section class="section-guide">
       <div class="container-content">
         <div class="guide-card">
-          <SectionHeader
-            eyebrow="Getting Started"
-            title="How to Use This Site"
-            size="md"
-          />
+          <SectionHeader eyebrow="Getting Started" title="How to Use This Site" size="md" />
           <div class="guide-paths">
             <div class="guide-path">
-              <div class="path-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-              </div>
               <h3>Start by Country</h3>
               <p>Know which country you need to comply with? Go directly to the country dossier for mandate dates, formats, and implementation steps.</p>
               <a href="/countries">Browse Countries →</a>
             </div>
             <div class="guide-path">
-              <div class="path-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <polyline points="16 18 22 12 16 6"/>
-                  <polyline points="8 6 2 12 8 18"/>
-                </svg>
-              </div>
               <h3>Start by Standard</h3>
               <p>Need to understand a specific format? The standard reference pages explain EN 16931, Peppol, XRechnung, and more.</p>
               <a href="/standards">Browse Standards →</a>
             </div>
             <div class="guide-path">
-              <div class="path-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                  <line x1="8" y1="21" x2="16" y2="21"/>
-                  <line x1="12" y1="17" x2="12" y2="21"/>
-                </svg>
-              </div>
               <h3>Start by ERP</h3>
-              <p>Need implementation guidance for your accounting system? ERP dossier pages cover SAP, Oracle, NetSuite, Odoo, and more.</p>
+              <p>Working inside an ERP or accounting system? See how your platform handles e-invoice export and validation.</p>
               <a href="/erp">Browse ERP Systems →</a>
             </div>
           </div>
@@ -254,240 +221,16 @@ const featuredCountries = [...activeCountries.slice(0, 3), ...upcomingCountries.
       </div>
     </section>
 
-    <!-- Disclaimer -->
-    <section class="section-disclaimer">
-      <div class="container-content">
-        <DisclaimerBox />
-      </div>
-    </section>
-
+    <DisclaimerBox />
   </div>
 </BaseLayout>
 
 <style>
-  .homepage {
-    background: var(--color-paper);
-  }
-
-  .section-hero {
-    padding: var(--space-8) 0 0;
-  }
-
-  .section-upcoming {
-    padding: var(--space-12) 0;
-    background: var(--color-paper-warm);
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .upcoming-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: var(--space-6);
-    gap: var(--space-4);
-  }
-
-  .upcoming-banners {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .view-all-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--color-accent);
-    text-decoration: none;
-    flex-shrink: 0;
-    white-space: nowrap;
-    transition: gap var(--transition-fast);
-  }
-
-  .view-all-link:hover {
-    gap: var(--space-3);
-  }
-
-  .section-countries,
-  .section-standards,
-  .section-erp {
-    padding: var(--space-16) 0;
-  }
-
-  .section-countries {
-    border-bottom: 1px solid var(--color-border-subtle);
-  }
-
-  .section-header-row {
-    margin-bottom: var(--space-8);
-  }
-
-  .country-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-4);
-  }
-
-  .standards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-4);
-  }
-
-  .erp-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-4);
-  }
-
-  .section-cta {
-    margin-top: var(--space-8);
-    display: flex;
-    justify-content: center;
-  }
-
-  .browse-all-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-6);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--color-surface);
-    background: var(--color-accent);
-    border-radius: var(--radius-lg);
-    text-decoration: none;
-    transition: background var(--transition-fast), gap var(--transition-fast);
-  }
-
-  .browse-all-btn:hover {
-    background: var(--color-accent-hover);
-    gap: var(--space-3);
-    color: var(--color-surface);
-  }
-
-  .browse-all-btn.secondary {
-    color: var(--color-slate-700);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border-strong);
-  }
-
-  .browse-all-btn.secondary:hover {
-    background: var(--color-paper-warm);
-    border-color: var(--color-slate-400);
-    color: var(--color-slate-900);
-  }
-
-  .section-hooks {
-    padding: var(--space-20) 0;
-    background: var(--color-paper-warm);
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .hooks-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
-    margin-top: var(--space-10);
-  }
-
-  .section-guide {
-    padding: var(--space-16) 0;
-  }
-
-  .guide-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-2xl);
-    padding: var(--space-10);
-  }
-
-  .guide-paths {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-8);
-    margin-top: var(--space-8);
-  }
-
-  .guide-path {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .path-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    background: var(--color-accent-light);
-    color: var(--color-accent);
-    border-radius: var(--radius-lg);
-  }
-
-  .guide-path h3 {
-    font-size: var(--text-base);
-    font-weight: 700;
-    color: var(--color-slate-900);
-    margin: 0;
-  }
-
-  .guide-path p {
-    font-size: var(--text-sm);
-    color: var(--color-slate-600);
-    line-height: var(--leading-relaxed);
-    margin: 0;
-  }
-
-  .guide-path a {
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--color-accent);
-    text-decoration: none;
-    margin-top: auto;
-  }
-
-  .guide-path a:hover {
-    text-decoration: underline;
-  }
-
-  .section-disclaimer {
-    padding: var(--space-12) 0 var(--space-16);
-  }
-
-  @media (max-width: 1024px) {
-    .country-grid,
-    .standards-grid,
-    .erp-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 768px) {
-    .hooks-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .guide-paths {
-      grid-template-columns: 1fr;
-      gap: var(--space-6);
-    }
-
-    .upcoming-header {
-      flex-direction: column;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .country-grid,
-    .standards-grid,
-    .erp-grid {
-      grid-template-columns: 1fr;
-    }
-  }
+  .homepage { display: flex; flex-direction: column; gap: var(--space-12); }
+  .section-standards-nav { padding-top: var(--space-4); }
+  .standards-nav-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+  .standards-nav-card { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); color: inherit; text-decoration: none; }
+  .standards-nav-card strong { font-size: var(--text-sm); }
+  .standards-nav-card span { font-size: var(--text-xs); color: var(--color-slate-600); }
+  .guide-paths { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
 </style>

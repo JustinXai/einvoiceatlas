@@ -162,6 +162,9 @@ export interface Standard {
   aiSummary: string;
   pros: string[];
   cons: string[];
+  aliasBlock?: string;
+  comparisonBlock?: string;
+  howItConnects?: string[];
 }
 
 // ---- ERP System ----
@@ -227,24 +230,45 @@ export interface RouteRequirement {
   isMandatory: boolean;
 }
 
+export interface RouteQuickAnswer {
+  question: string;
+  answer: string;
+  order: number;
+}
+
 /** A provider route guide entry.
  *  Route descriptions should distinguish between mandatory and advisory requirements.
  */
 export interface ProviderRoute {
   slug: string;
+  urlSlug?: string;
   name: string;
+  title?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  h1?: string;
   shortDescription: string;
   description: string;
-  howItWorks: string;
-  requirements: RouteRequirement[];
-  pros: string[];
-  cons: string[];
-  bestFor: string[];
-  formatsCompatible: string[];
-  countriesApplicable: string[];
-  complexity: 'low' | 'medium' | 'high';
-  costIndicators: string;
-  keyProviders: string[];
+  howItWorks?: string;
+  routeUseCase?: string;
+  comparisonNote?: string;
+  providerChecklist?: string[];
+  erpQuestions?: string[];
+  countryRelevance?: string[];
+  commonMistakes?: string[];
+  quickAnswer?: RouteQuickAnswer[];
+  aiSummary?: string;
+  disclaimer?: string;
+  ctaTitle?: string;
+  shortlistCta?: string;
+  pros?: string[];
+  cons?: string[];
+  bestFor?: string[];
+  formatsCompatible?: string[];
+  countriesApplicable?: string[];
+  complexity?: 'low' | 'medium' | 'high';
+  costIndicators?: string;
+  keyProviders?: string[];
 
   // --- Source Attribution (MANDATORY) ---
   /** At least 1 source — typically from Peppol or government portal docs */
@@ -253,6 +277,7 @@ export interface ProviderRoute {
   // --- Navigational Relationships ---
   relatedCountrySlugs: string[];
   relatedStandardSlugs: string[];
+  relatedErpSlugs?: string[];
 
   // --- Dates & Meta ---
   lastReviewed: string;

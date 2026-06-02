@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import AISummaryBox from '../../components/ui/AISummaryBox.astro';
+import QuickAnswerBox from '../../components/ui/QuickAnswerBox.astro';
+import SourcesBox from '../../components/ui/SourcesBox.astro';
+import DisclaimerBox from '../../components/ui/DisclaimerBox.astro';
+import ShortlistForm from '../../components/forms/ShortlistForm.astro';
+import { providerRoutes, getRouteBySlug } from '../../data/providers';
+
+export function getStaticPaths() {
+  return providerRoutes.map((route) => ({
+    params: { slug: route.urlSlug ?? route.slug },
+    props: { route },
+  }));
+}
+
+const { route } = Astro.props;
+const resolvedRoute = getRouteBySlug(route.slug) ?? route;
+
+const breadcrumbItems = [
+  { label: 'Provider Routes', href: '/routes' },
+  { label: resolvedRoute.title ?? resolvedRoute.name },
+];
+
+const metaTitle = resolvedRoute.metaTitle ?? `${resolvedRoute.name} | EInvoiceAtlas`;
+const metaDescription = resolvedRoute.metaDescription ?? resolvedRoute.shortDescription;
+const quickAnswers = resolvedRoute.quickAnswer?.map((item) => ({ q: item.question, a: item.answer })) ?? [
+  { q: `What is ${resolvedRoute.name}?`, a: resolvedRoute.shortDescription },
+];
+---
+
+<BaseLayout title={metaTitle} description={metaDescription}>
+  <div class="container-content page-route-detail">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <header class="route-header">
+      <p class="eyebrow">Provider Route</p>
+      <h1 class="route-h1">{resolvedRoute.h1 ?? resolvedRoute.name}</h1>
+      <p class="route-lede">{resolvedRoute.shortDescription}</p>
+    </header>
+
+    {resolvedRoute.aiSummary && <AISummaryBox summary={resolvedRoute.aiSummary} />}
+
+    <QuickAnswerBox items={quickAnswers} />
+
+    <div class="route-grid">
+      <main class="route-main">
+        <section class="content-section">
+          <h2 class="section-h2">What is a Peppol Access Point?</h2>
+          <p>{resolvedRoute.description}</p>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-h2">When do you need one?</h2>
+          <p>{resolvedRoute.routeUseCase}</p>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-h2">Peppol Access Point vs Peppol BIS Billing 3.0</h2>
+          <p>{resolvedRoute.comparisonNote}</p>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-h2">Provider selection checklist</h2>
+          <ul class="checklist-list">
+            {resolvedRoute.providerChecklist?.map((item) => <li>{item}</li>)}
+          </ul>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-h2">ERP integration questions</h2>
+          <ul class="checklist-list">
+            {resolvedRoute.erpQuestions?.map((item) => <li>{item}</li>)}
+          </ul>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-h2">Country relevance</h2>
+          <ul class="checklist-list">
+            {resolvedRoute.countryRelevance?.map((item) => <li>{item}</li>)}
+          </ul>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-h2">Common mistakes</h2>
+          <ul class="checklist-list">
+            {resolvedRoute.commonMistakes?.map((item) => <li>{item}</li>)}
+          </ul>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-h2">Related standards</h2>
+          <ul class="related-list">
+            {resolvedRoute.relatedStandards?.map((slug) => <li><a href={`/standards/${slug}/`}>{slug}</a></li>)}
+          </ul>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-h2">Related ERP systems</h2>
+          <ul class="related-list">
+            {resolvedRoute.relatedErpSystems?.map((slug) => <li><a href={`/erp/${slug}-e-invoicing/`}>{slug}</a></li>)}
+          </ul>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-h2">Related countries</h2>
+          <ul class="related-list">
+            {resolvedRoute.relatedCountries?.map((slug) => <li><a href={`/countries/${slug}-e-invoicing/`}>{slug}</a></li>)}
+          </ul>
+        </section>
+
+        <SourcesBox sources={resolvedRoute.officialSources} />
+        <DisclaimerBox />
+      </main>
+
+      <aside class="route-side">
+        <div class="cta-panel">
+          <h2 class="section-h2">{resolvedRoute.ctaTitle ?? 'Request provider shortlist'}</h2>
+          <p>{resolvedRoute.shortlistCta ?? 'Use the checklist to compare route-fit providers and ERP integration options.'}</p>
+          <ShortlistForm compact={true} />
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .route-header { margin-bottom: var(--space-8); }
+  .eyebrow { text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--color-slate-500); font-size: var(--text-xs); }
+  .route-h1 { margin: 0; }
+  .route-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--space-8); align-items: start; }
+  .checklist-list, .related-list { padding-left: 1.25rem; }
+  .cta-panel { position: sticky; top: 1.5rem; }
+</style>

@@ -19,6 +19,107 @@ function src(
 export const providerRoutes: ProviderRoute[] = [
   // ============================================================
   {
+    slug: 'peppol-access-point',
+    urlSlug: 'peppol-access-point',
+    title: 'Peppol Access Point',
+    metaTitle: 'Peppol Access Point | Provider checklist, ERP integration, and routing',
+    metaDescription:
+      'Understand the Peppol Access Point route, provider selection checklist, ERP integration questions, and Peppol invoice routing with EN 16931 and Peppol BIS Billing 3.0.',
+    h1: 'Peppol Access Point',
+    aiSummary:
+      'A Peppol Access Point is the routing layer that sends and receives Peppol invoice traffic for your ERP or e-invoicing platform. Teams use it when they need a provider to exchange Peppol BIS Billing 3.0 documents, validate routing, and connect their invoice export flow to the Peppol network. The decision is about network access and transport, not about replacing the invoice format itself.',
+    quickAnswer: [
+      {
+        question: 'What is a Peppol Access Point?',
+        answer: 'It is the certified route a business uses to send and receive Peppol invoices through the network.',
+        order: 1,
+      },
+      {
+        question: 'Is a Peppol Access Point the same as Peppol BIS Billing 3.0?',
+        answer: 'No. Peppol BIS Billing 3.0 is the invoice specification; the Access Point is the routing service.',
+        order: 2,
+      },
+      {
+        question: 'What should ERP teams check first?',
+        answer: 'Confirm ERP export support, Peppol invoice mapping, validation, and the provider selection checklist.',
+        order: 3,
+      },
+    ],
+    routeUseCase:
+      'Use a Peppol Access Point when you need a provider to route Peppol invoices from your ERP or middleware into the Peppol network, especially when you want a structured provider selection checklist, ERP integration support, and a controlled way to exchange Peppol BIS Billing 3.0 documents.',
+    comparisonNote:
+      'Peppol Access Point is the transport and routing service. Peppol BIS Billing 3.0 is the invoice format/specification that your ERP or middleware must generate. A provider can help with connectivity, validation, and delivery, but it does not replace EN 16931, UBL Invoice mapping, or your ERP export design.',
+    providerChecklist: [
+      'Confirm the provider is a real Peppol Access Point provider with the routing coverage you need.',
+      'Check support for Peppol BIS Billing 3.0, EN 16931 alignment, and UBL Invoice input.',
+      'Review ERP integration options, API documentation, and validation tooling.',
+      'Ask how delivery receipts, error handling, and monitoring are exposed to your team.',
+      'Confirm onboarding, participant ID handling, and country coverage for your trading partners.',
+    ],
+    erpQuestions: [
+      'Can our ERP export the invoice fields required for Peppol BIS Billing 3.0?',
+      'Do we need middleware to map ERP data into UBL Invoice or another compatible syntax?',
+      'How will we validate the invoice before it reaches the Peppol Access Point?',
+      'What does the provider expose for retries, receipts, and troubleshooting?',
+    ],
+    countryRelevance: [
+      'Belgium uses Peppol heavily in public-sector and broader e-invoicing workflows.',
+      'Germany teams often compare Peppol routing with XRechnung and SAP-ready ERP exports.',
+      'France may involve Peppol routing alongside Factur-X and PDP route decisions.',
+      'The Netherlands is relevant where cross-border Peppol invoice exchange is part of the operating model.',
+    ],
+    commonMistakes: [
+      'Choosing a provider before confirming the country route and invoice format.',
+      'Confusing Peppol Access Point routing with Peppol BIS Billing 3.0 invoice structure.',
+      'Ignoring ERP export and validation constraints until late in implementation.',
+      'Assuming the access point alone guarantees compliance across every country.',
+    ],
+    pros: [
+      'Global route into the Peppol network',
+      'Supports invoice delivery receipts and transport visibility',
+      'Useful for ERP integration and controlled routing',
+    ],
+    cons: [
+      'Requires correct invoice format preparation upstream',
+      'Provider capabilities vary by country and ERP stack',
+      'Route selection still depends on local mandate context',
+    ],
+    bestFor: [
+      'Teams comparing Peppol provider options',
+      'ERP owners planning invoice routing',
+      'Businesses needing a provider selection checklist',
+    ],
+    formatsCompatible: ['peppol-bis-3', 'ubl-2.1', 'xrechnung', 'en-16931'],
+    countriesApplicable: ['belgium', 'germany', 'france', 'netherlands', 'uk'],
+    complexity: 'medium',
+    costIndicators: 'Provider pricing depends on volume, onboarding scope, and ERP integration effort.',
+    keyProviders: ['Peppol Access Point providers', 'ERP integration partners', 'E-invoicing providers'],
+    officialSources: [
+      src(
+        'Peppol BIS Billing 3.0',
+        'OpenPeppol AS',
+        'https://docs.peppol.eu/poacc/billing/3.0/',
+        'standard-body',
+        '2026-06-02',
+        'Invoice specification and validation rules used by Peppol routing',
+      ),
+      src(
+        'The Peppol Network',
+        'OpenPeppol AS',
+        'https://peppol.eu/the-network/',
+        'standard-body',
+        '2026-06-02',
+        'Network overview and access point model',
+      ),
+    ],
+    relatedCountrySlugs: ['belgium', 'germany', 'france', 'netherlands', 'uk'],
+    relatedStandardSlugs: ['peppol-bis-3', 'en-16931', 'ubl-2.1'],
+    lastReviewed: '2026-06-02',
+    shortlistCta: 'Request a provider shortlist for your ERP and country route.',
+    ctaTitle: 'Request provider shortlist',
+  },
+  // ============================================================
+  {
     slug: 'peppol-network',
     name: 'Peppol Network Route',
     shortDescription: 'Send invoices via the global Peppol e-delivery network.',
@@ -79,6 +180,7 @@ export const providerRoutes: ProviderRoute[] = [
     // --- Meta ---
     lastReviewed: '2026-05-15',
   },
+
 
   // ============================================================
   {

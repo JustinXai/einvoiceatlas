@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { countries } from '../data/countries';
 import { standards } from '../data/standards';
 import { erpSystems } from '../data/erpSystems';
+import { providerRoutes } from '../data/providers';
 import { siteConfig } from '../data/site';
 
 export const GET: APIRoute = () => {
@@ -24,7 +25,7 @@ export const GET: APIRoute = () => {
     {
       title: 'Browse Standards',
       path: '/standards',
-      description: `Reference pages for 6 e-invoice formats and standards including EN 16931, Peppol BIS 3, XRechnung, and Factur-X.`,
+      description: `Reference pages for e-invoice formats and standards including EN 16931, Peppol BIS 3, XRechnung, ZUGFeRD, and Factur-X.`,
     },
     {
       title: 'Browse ERP Systems',
@@ -34,7 +35,7 @@ export const GET: APIRoute = () => {
     {
       title: 'Provider Routes',
       path: '/routes',
-      description: `Understand the four e-invoicing routes: Peppol Network, Direct API, Clearing House, and Hybrid.`,
+      description: `Understand e-invoicing routes: Peppol Network, Peppol Access Point, Direct API, Clearing House, and Hybrid.`,
     },
     {
       title: 'Playground',
@@ -47,7 +48,7 @@ export const GET: APIRoute = () => {
   const countryPages = countries.map(c => ({
     title: `${c.name} E-Invoicing`,
     path: `/countries/${c.urlSlug ?? c.slug}`,
-    description: `${c.name}: ${c.mandatePhase}. Effective: ${c.effectiveDate ? new Date(c.effectiveDate).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : 'Mandate status under consultation'}. Formats: ${c.formats.join(', ')}.`,
+    description: `${c.name}: ${c.mandatePhase}. Effective: ${c.effectiveDate ? new Date(c.effectiveDate).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : 'Mandate status under review'}. Formats: ${c.formats.join(', ')}.`,
   }));
 
   const standardPages = standards.map(s => ({
@@ -62,8 +63,14 @@ export const GET: APIRoute = () => {
     description: `${e.vendor} ${e.category} ERP. Native support: ${e.nativeEInvoiceSupport ? 'Yes' : 'Add-on required'}. Complexity: ${e.configurationComplexity}.`,
   }));
 
+  const routePages = providerRoutes.map(r => ({
+    title: `${r.title ?? r.name} Route`,
+    path: `/routes/${r.urlSlug ?? r.slug}`,
+    description: r.shortDescription,
+  }));
+
   // All implemented pages — static + detail pages
-  const allPages = [...pages, ...countryPages, ...standardPages, ...erpPages];
+  const allPages = [...pages, ...countryPages, ...standardPages, ...erpPages, ...routePages];
 
   const llmsContent = `# EInvoiceAtlas — LLM Readable Site Index
 

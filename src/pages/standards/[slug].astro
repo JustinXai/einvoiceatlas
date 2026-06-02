@@ -221,14 +221,28 @@ const formatNote = standard.isPdfBased
           </section>
         )}
 
-        {standard.commonMistakes && standard.commonMistakes.length > 0 && (
+        {(standard as any).aliasBlock && (
           <section class="content-section">
-            <h2 class="section-h2">Common Mistakes to Avoid</h2>
-            <ul class="mistakes-list">
-              {standard.commonMistakes.map(mistake => (
-                <li class="mistake-item">{mistake}</li>
+            <h2 class="section-h2">Also Known As</h2>
+            <p class="section-intro">{(standard as any).aliasBlock}</p>
+          </section>
+        )}
+
+        {(standard as any).howItConnects?.length > 0 && (
+          <section class="content-section">
+            <h2 class="section-h2">How It Connects</h2>
+            <ul class="how-it-connects">
+              {(standard as any).howItConnects.map((line: string) => (
+                <li>{line}</li>
               ))}
             </ul>
+          </section>
+        )}
+
+        {(standard as any).comparisonBlock && (
+          <section class="content-section">
+            <h2 class="section-h2">Comparison</h2>
+            <p>{(standard as any).comparisonBlock}</p>
           </section>
         )}
       </div>

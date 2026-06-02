@@ -136,6 +136,14 @@ export const standards: Standard[] = [
       'Requires understanding of BT code taxonomy',
       'Validation can be strict — small errors cause rejections',
     ],
+    aliasBlock: 'Also searched as: EN16931, EN 16931 standard, EN 16931 invoice, EN 16931 e-invoice standard, European semantic invoice model.',
+    howItConnects: [
+      'EN 16931 → European semantic invoice model — defines what data an invoice must contain',
+      'Peppol BIS Billing 3.0 → Peppol network invoice specification built on UBL 2.1 with EN 16931 semantics',
+      'XRechnung → German national format implementing EN 16931 as pure XML',
+      'ZUGFeRD / Factur-X → Hybrid PDF/XML invoice family — embedded XML conforms to EN 16931',
+      'UBL / CII → XML syntax layer used to represent EN 16931 data in structured formats',
+    ],
   },
 
   // ============================================================
@@ -317,21 +325,22 @@ export const standards: Standard[] = [
       'Mandatory only for B2G, limiting network effects for B2B',
       'German-specific extensions add complexity for cross-border use',
     ],
+    comparisonBlock: 'XRechnung vs ZUGFeRD: XRechnung is pure XML with no PDF. ZUGFeRD is a PDF/A-3 with embedded EN 16931 XML. Both are EN 16931-compliant but serve different workflows. XRechnung is required for German federal B2G. ZUGFeRD is preferred in German B2B supply chains for its human-readable PDF layer. They are not interchangeable.',
   },
 
   // ============================================================
   {
-    slug: 'factur-x',
-    urlSlug: 'factur-x',
-    name: 'Factur-X — French Hybrid E-Invoice Standard',
-    shortName: 'Factur-X',
+    slug: 'zugferd',
+    urlSlug: 'zugferd',
+    name: 'ZUGFeRD — Zentraler User Guide des Forums DATENBANKARCHITEKTUR German E-Invoice Standard',
+    shortName: 'ZUGFeRD',
     category: 'national',
-    governingBody: 'AFNOR (Association Française de Normalisation)',
-    version: '1.0.05 (2022)',
+    governingBody: 'FeRD (Forum Elektronische Rechnung Deutschland)',
+    version: '2.3.1 (2022)',
     description:
-      'Factur-X is France\'s national e-invoice format, combining a human-readable PDF/A-3 with a machine-readable XML file embedded inside it. It is one of the most widely adopted hybrid formats in Europe, balancing legal compliance with practical usability.',
-    countriesUsing: ['france'],
-    erpSupport: ['sap', 'oracle', 'odoo', 'sage', 'netsuite', 'microsoft-dynamics'],
+      'ZUGFeRD is Germany\'s hybrid e-invoice format combining a human-readable PDF/A-3 document with a machine-readable XML file embedded inside it. It is based on the EN 16931 semantic data model and is one of two dominant German e-invoice formats alongside XRechnung. ZUGFeRD is widely used in B2B workflows because the PDF provides immediate human readability while the embedded XML enables automated processing.',
+    countriesUsing: ['germany'],
+    erpSupport: ['sap', 'oracle', 'datev', 'sage'],
     mandatoryFields: 52,
     isPeppolBased: false,
     isXmlBased: true,
@@ -341,7 +350,7 @@ export const standards: Standard[] = [
       {
         group: 'PDF Component',
         fields: [
-          { code: 'Visual', name: 'Human-readable invoice layout', mandatory: true, note: 'Standard invoice appearance, no special restrictions' },
+          { code: 'Visual', name: 'Human-readable invoice layout', mandatory: true, note: 'Standard invoice appearance — no special restrictions' },
         ],
       },
       {
@@ -357,8 +366,103 @@ export const standards: Standard[] = [
       },
     ],
     validationRules: [
-      'PDF must be valid PDF/A-3 format',
-      'XML must be embedded in PDF as an "attached file" (not in the visual content)',
+      'PDF must be valid PDF/A-3 format — regular PDFs are not compliant',
+      'XML must be embedded in PDF as an attached file (not visible in the visual PDF content)',
+      'XML must conform to EN 16931 semantic data model',
+      'ZUGFeRD-specific profile rules apply for the embedded XML structure',
+      'German extensions (e.g., StNr, USt-IdNr) may be required depending on recipient',
+    ],
+    commonMistakes: [
+      'Embedding the XML in the visible PDF content instead of as a file attachment',
+      'Not generating valid PDF/A-3 — regular PDFs are not ZUGFeRD compliant',
+      'Confusing ZUGFeRD with XRechnung — they are different formats and are not interchangeable',
+      'Missing mandatory EN 16931 fields in the embedded XML',
+      'Sending a ZUGFeRD PDF where a pure XML XRechnung is required',
+    ],
+    officialSources: [
+      src(
+        'ZUGFeRD 2.3.1 Specification',
+        'FeRD (Forum Elektronische Rechnung Deutschland)',
+        'https://www.ferd-net.de/zugferd/',
+        'standard-body',
+        '2026-06-02',
+        'Official ZUGFeRD specification, version history, and implementation guidance',
+      ),
+      src(
+        'EN 16931-1:2017 — Semantic Data Model',
+        'CEN (European Committee for Standardization)',
+        'https://standards.cen.eu/',
+        'standard-body',
+        '2026-05-01',
+        'Semantic invoice data model underlying ZUGFeRD XML structure',
+      ),
+    ],
+    relatedCountries: ['germany'],
+    relatedStandardSlugs: ['xrechnung', 'en-16931', 'factur-x', 'peppol-bis-3'],
+    lastReviewed: '2026-06-02',
+    quickAnswer: [
+      { question: 'What is ZUGFeRD?', answer: 'ZUGFeRD is a hybrid invoice format: a PDF/A-3 with an EN 16931 XML file embedded inside it. The PDF is human-readable; the XML is machine-readable. Both are in the same file.', order: 1 },
+      { question: 'Is ZUGFeRD the same as XRechnung?', answer: 'No. ZUGFeRD is a PDF with embedded XML (hybrid). XRechnung is pure XML. They are different formats and are not interchangeable.', order: 2 },
+      { question: 'Is ZUGFeRD the same as Factur-X?', answer: 'Yes in concept — both are PDF/A-3 with embedded EN 16931 XML. They share the same hybrid approach and are maintained by the same international working group. They differ in naming convention and market focus.', order: 3 },
+      { question: 'Can ZUGFeRD be sent via Peppol?', answer: 'Not natively. Peppol transmits XML documents. Some Peppol access point providers offer ZUGFeRD conversion or transmission services.', order: 4 },
+    ],
+    aiSummary:
+      'ZUGFeRD (Zentraler User Guide des Forums DATENBANKARCHITEKTUR) is Germany\'s original hybrid e-invoice format, developed by FeRD to balance human readability (via PDF) with machine-readability (via EN 16931 XML). It is based on the European semantic data model EN 16931, making it compatible with EU-wide e-invoicing frameworks. ZUGFeRD is widely adopted in German B2B supply chains because it works with standard PDF viewers while enabling automated invoice processing. It coexists with XRechnung in the German market — ZUGFeRD for B2B flexibility, XRechnung for government procurement. The format is referenced by the European standardisation organisations and is part of the EN 16931-compliant format family that includes Factur-X.',
+    pros: [
+      'Human-readable (PDF) + machine-readable (XML) in one file',
+      'Based on EN 16931 — EU-compliant semantic model',
+      'Strong adoption in German B2B supply chains',
+      'No special software needed to view the invoice',
+      'Supported by major German ERP systems including SAP and DATEV',
+    ],
+    cons: [
+      'PDF generation adds complexity to ERP integration',
+      'Not a pure structured data format — requires PDF parsing for automation',
+      'Peppol does not natively support PDF formats',
+      'Some German public authorities mandate XRechnung instead',
+    ],
+  },
+
+  // ============================================================
+  {
+    slug: 'factur-x',
+    urlSlug: 'factur-x',
+    name: 'Factur-X — French Hybrid E-Invoice Standard',
+    shortName: 'Factur-X',
+    category: 'national',
+    governingBody: 'AFNOR (Association Française de Normalisation)',
+    version: '1.0.05 (2022)',
+    description:
+      'Factur-X is France\'s national e-invoice format, combining a human-readable PDF/A-3 with a machine-readable XML file embedded inside it. It is one of the most widely adopted hybrid formats in Europe, balancing legal compliance with practical usability. Factur-X and ZUGFeRD share the same hybrid PDF/XML concept and the same EN 16931-based XML profile — they are essentially the same format family with different market names.',
+    countriesUsing: ['france'],
+    erpSupport: ['sap', 'oracle', 'odoo', 'sage', 'netsuite', 'microsoft-dynamics'],
+    mandatoryFields: 52,
+    isPeppolBased: false,
+    isXmlBased: true,
+    isPdfBased: true,
+    pdfCompatibility: 'PDF/A-3 (EN 16931 XML embedded in PDF)',
+    dataFieldOverview: [
+      {
+        group: 'PDF Component',
+        fields: [
+          { code: 'Visual', name: 'Human-readable invoice layout', mandatory: true, note: 'Standard invoice appearance — no special restrictions' },
+        ],
+      },
+      {
+        group: 'XML Component (EN 16931 profile)',
+        fields: [
+          { code: 'BT-1', name: 'Invoice number', mandatory: true },
+          { code: 'BT-2', name: 'Issue date', mandatory: true },
+          { code: 'BT-27', name: 'Seller name + VAT', mandatory: true },
+          { code: 'BT-44', name: 'Buyer name + VAT', mandatory: true },
+          { code: 'BT-151', name: 'Item name', mandatory: true },
+          { code: 'BT-152', name: 'Item description', mandatory: false },
+        ],
+      },
+    ],
+    validationRules: [
+      'PDF must be valid PDF/A-3 format — regular PDFs are not compliant',
+      'XML must be embedded in PDF as an attached file (not visible in the visual PDF content)',
       'XML must conform to EN 16931',
       'Factur-X specific profile rules apply (e.g., certain BT fields have specific French extensions)',
     ],
@@ -366,6 +470,7 @@ export const standards: Standard[] = [
       'Embedding the XML in the visible PDF content instead of as a file attachment',
       'Not generating valid PDF/A-3 — regular PDFs are not compliant',
       'Missing mandatory EN 16931 fields in the embedded XML',
+      'Confusing Factur-X with plain PDF invoicing — the embedded XML is mandatory',
     ],
     officialSources: [
       src(
@@ -374,7 +479,7 @@ export const standards: Standard[] = [
         'https://www.afnor.org/standard/factur-x/',
         'standard-body',
         '2026-05-01',
-        'Official Factur-X specification; mandate basis for France',
+        'Official Factur-X specification; mandate basis for France B2B and B2G',
       ),
       src(
         'Factur-X Documentation (Community)',
@@ -387,25 +492,26 @@ export const standards: Standard[] = [
     ],
     relatedCountries: ['france'],
     relatedStandardSlugs: ['en-16931', 'zugferd', 'peppol-bis-3'],
-    lastReviewed: '2026-05-15',
+    lastReviewed: '2026-06-02',
     quickAnswer: [
-      { question: 'Is Factur-X a PDF?', answer: 'Factur-X is a PDF/A-3 file with an XML file embedded inside it. The PDF is human-readable; the XML is machine-readable. Both are in the same file.', order: 1 },
-      { question: 'Is Factur-X the same as ZUGFeRD?', answer: 'Factur-X and ZUGFeRD are both PDF/A-3 with embedded XML and share the same EN 16931-based XML profile. They are essentially the same concept with slightly different implementations and names.', order: 2 },
-      { question: 'Can Factur-X be sent via Peppol?', answer: 'Not natively. Peppol transmits XML documents. However, some Peppol access point providers offer Factur-X conversion or transmission services.', order: 3 },
+      { question: 'What is Factur-X?', answer: 'Factur-X is a PDF/A-3 file with an XML file embedded inside it. The PDF is human-readable; the XML is machine-readable. Both are in the same file.', order: 1 },
+      { question: 'Is Factur-X the same as ZUGFeRD?', answer: 'Factur-X and ZUGFeRD are both PDF/A-3 with embedded EN 16931 XML. They share the same hybrid invoice concept and are from the same international working group. They differ mainly in naming and market focus.', order: 2 },
+      { question: 'Why does Factur-X matter for France e-invoicing?', answer: 'Factur-X is one of the two mandatory formats for e-invoicing in France under the B2B mandate rollout beginning September 2026. Businesses issuing to French entities will need to generate Factur-X or UBL 2.1 invoices.', order: 3 },
+      { question: 'Can Factur-X be sent via Peppol?', answer: 'Not natively. Peppol transmits XML documents. Some Peppol access point providers offer Factur-X conversion or transmission services.', order: 4 },
     ],
     aiSummary:
-      'Factur-X was developed by the French administration and AFNOR to address the need for both human-readable invoices (for manual review) and machine-readable invoices (for automated processing). The format embeds an EN 16931-compliant XML inside a PDF/A-3 file, making it immediately usable by both humans and systems. It is mandatory for all B2B and B2G invoices in France, with strict requirements on the embedded XML structure.',
+      'Factur-X was developed by the French administration and AFNOR to address the need for both human-readable invoices (for manual review) and machine-readable invoices (for automated processing). The format embeds an EN 16931-compliant XML inside a PDF/A-3 file, making it immediately usable by both humans and systems. It is mandatory for all B2B and B2G invoices in France under the phased rollout beginning 1 September 2026, with strict requirements on the embedded XML structure. Factur-X is part of the same hybrid invoice family as ZUGFeRD — both formats use the same EN 16931 XML profile and are maintained by the same international working group.',
     pros: [
       'Human-readable (PDF) + machine-readable (XML) in one file',
-      'Widely supported by French ERP systems',
       'Based on EN 16931 — EU-compliant semantic model',
       'No special software needed to view the invoice',
+      'Mandatory for France B2B under the 2026-2027 mandate rollout',
     ],
     cons: [
       'Requires PDF/A-3 generation capability',
       'Peppol does not natively support PDF formats',
-      'Not accepted in countries that mandate pure XML formats',
       'PDF generation adds complexity to ERP integration',
+      'Not accepted in countries that mandate pure XML formats',
     ],
   },
 
