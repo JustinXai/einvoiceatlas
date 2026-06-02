@@ -375,6 +375,15 @@ export const countries: Country[] = [
     relatedStandards: ['ubl-2.1', 'en-16931', 'xrechnung', 'peppol-bis-3'],
     relatedErpSystems: ['sap', 'odoo'],
     primaryHook: 'h1-country-readiness',
+    sectionNearTop: {
+      heading: 'Belgium e-invoicing mandate: Peppol, EN 16931, and what teams should check',
+      body: 'For teams assessing e invoicing Belgium compliance, the mandatory rollout from January 2026 is anchored to the European semantic model EN 16931. For teams assessing e-invoicing Belgium readiness, the key formats are UBL 2.1 and XRechnung — both structured invoice formats aligned with EN 16931. Peppol BIS Billing 3.0 (Peppol BIS 3.0) provides a reference implementation of EN 16931 semantics over UBL 2.1 syntax, and a Peppol Access Point can handle routing for businesses exchanging e-invoices internationally. Implementation planning should cover ERP export configuration for structured invoice fields, format selection, and transmission route assessment.',
+      links: [
+        { label: 'EN 16931 Invoice Standard', href: '/standards/en-16931/' },
+        { label: 'Peppol BIS Billing 3.0', href: '/standards/peppol-bis-3/' },
+        { label: 'Peppol Access Point Route', href: '/routes/peppol-access-point/' },
+      ],
+    },
     relatedCountrySlugs: ['france', 'netherlands', 'luxembourg'],
     lastReviewed: '2026-05-20',
     upcomingMilestones: [

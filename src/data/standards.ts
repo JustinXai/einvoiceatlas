@@ -157,6 +157,17 @@ export const standards: Standard[] = [
     category: 'universal',
     governingBody: 'OpenPeppol AS (non-profit)',
     version: '3.0',
+    metaTitle: 'Peppol BIS 3.0: Invoice Format, Routing, and EN 16931',
+    metaDescription: 'Peppol BIS Billing 3.0 invoice format guide: UBL Invoice structure, EN 16931 semantics, Peppol Access Point routing, and how it compares to XRechnung, Factur-X, and ZUGFeRD.',
+    formatGlossary: [
+      { term: 'Peppol format', colloquial: 'Peppol invoice format', precise: 'Usually means Peppol BIS Billing 3.0 — the structured invoice specification used on the Peppol Network.' },
+      { term: 'Peppol invoice', colloquial: 'Structured invoice exchanged through Peppol', precise: 'A UBL Invoice document sent via the Peppol Network using Peppol BIS Billing 3.0 rules.' },
+      { term: 'Peppol BIS 3.0', colloquial: 'Formal billing specification', precise: 'Peppol BIS Billing 3.0 — a CIUS (Core Invoice Usage Specification) built on UBL 2.1 and EN 16931.' },
+      { term: 'Peppol BIS Billing 3.0', colloquial: 'Peppol billing standard', precise: 'The OpenPeppol specification that defines invoice, credit note, and related document rules for Peppol exchange.' },
+      { term: 'EN 16931', colloquial: 'Semantic invoice data model', precise: 'The European semantic standard defining what data an invoice must contain — not a delivery network or file format.' },
+      { term: 'Peppol Access Point', colloquial: 'Routing provider', precise: 'The certified service that sends and receives Peppol documents through the Peppol Network.' },
+    ],
+    aliasBlock: 'Also searched as: Peppol format, Peppol invoice format, Peppol BIS 3, Peppol BIS 3.0, Peppol BIS Billing 3.0, Peppol invoice specification.',
     description:
       'Peppol BIS 3.0 is a set of structured document specifications built on UBL 2.1, implementing the EN 16931 semantic model. It is the format used on the Peppol Network — a global e-delivery infrastructure connecting businesses, governments, and ERP systems across 40+ countries.',
     countriesUsing: ['france', 'germany', 'belgium', 'netherlands', 'uk', 'australia', 'singapore'],
@@ -234,6 +245,14 @@ export const standards: Standard[] = [
       'Requires access point subscription',
       'Additional Peppol-specific validation rules beyond standard UBL',
       'Some countries have national formats that differ slightly from Peppol BIS 3',
+    ],
+    howItConnects: [
+      'Peppol BIS Billing 3.0 — formal billing specification built on UBL 2.1 with EN 16931 semantics',
+      'Peppol Access Point — certified routing service that sends and receives Peppol documents',
+      'EN 16931 — European semantic model that Peppol BIS 3.0 implements; defines what data fields an invoice must contain',
+      'UBL 2.1 — XML syntax layer that Peppol BIS 3.0 uses as its document format',
+      'XRechnung / Factur-X / ZUGFeRD — national formats that share EN 16931 semantics but may use different XML profiles',
+      'Peppol BIS 3.0 is not itself a country mandate — it is a specification relevant where Peppol network exchange is used',
     ],
   },
 
@@ -668,6 +687,14 @@ export const standards: Standard[] = [
       'Requires SDI registration and compliance',
       'Strict validation rules cause frequent rejections for foreign senders',
     ],
+    sectionNearTop: {
+      heading: 'FatturaPA XML format: what the file structure means for ERP export',
+      body: 'FatturaPA is a structured XML invoice format mandated by Italy\'s Agenzia delle Entrate for all domestic B2B and B2G transactions. The format is validated by SDI (Sistema di Interscambio) before routing to the recipient. Key ERP export considerations: the XML must include Italian-specific fields (Partita IVA, CodiceDestinatario, tax regime codes), all fields are validated in real time, and rejected invoices cannot be corrected in place — a new file must be submitted. FatturaPA shares the EN 16931 semantic model in its data taxonomy, but its XML schema is Italy-specific and not directly interchangeable with Peppol BIS Billing 3.0, XRechnung, or ZUGFeRD.',
+      links: [
+        { label: 'EN 16931 Invoice Standard', href: '/standards/en-16931/' },
+        { label: 'Italy E-Invoicing Mandate', href: '/countries/italy-e-invoicing/' },
+      ],
+    },
   },
 ];
 

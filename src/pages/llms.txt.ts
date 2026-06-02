@@ -9,8 +9,7 @@ export const GET: APIRoute = () => {
   const siteUrl = siteConfig.url;
   const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  // Only include pages that are actually implemented.
-  // Detail pages are Phase 2 — they are NOT listed here until implemented.
+  // All implemented pages — static + detail pages
   const pages = [
     {
       title: 'Home',
@@ -66,7 +65,7 @@ export const GET: APIRoute = () => {
   const routePages = providerRoutes.map(r => ({
     title: `${r.title ?? r.name} Route`,
     path: `/routes/${r.urlSlug ?? r.slug}`,
-    description: r.shortDescription,
+    description: r.shortDescription ?? r.routeUseCase ?? '',
   }));
 
   // All implemented pages — static + detail pages
