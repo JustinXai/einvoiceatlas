@@ -158,7 +158,7 @@ export const standards: Standard[] = [
     governingBody: 'OpenPeppol AS (non-profit)',
     version: '3.0',
     metaTitle: 'Peppol BIS 3.0: Invoice Format, Routing, and EN 16931',
-    metaDescription: 'Peppol BIS Billing 3.0 invoice format guide: UBL Invoice structure, EN 16931 semantics, Peppol Access Point routing, and how it compares to XRechnung, Factur-X, and ZUGFeRD.',
+    metaDescription: 'Peppol BIS Billing 3.0 invoice format guide: UBL Invoice structure, EN 16931 semantics, Peppol Access Point routing, XRechnung, Factur-X, and ZUGFeRD.',
     formatGlossary: [
       { term: 'Peppol format', colloquial: 'Peppol invoice format', precise: 'Usually means Peppol BIS Billing 3.0 — the structured invoice specification used on the Peppol Network.' },
       { term: 'Peppol invoice', colloquial: 'Structured invoice exchanged through Peppol', precise: 'A UBL Invoice document sent via the Peppol Network using Peppol BIS Billing 3.0 rules.' },
