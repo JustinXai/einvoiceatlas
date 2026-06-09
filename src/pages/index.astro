@@ -67,6 +67,22 @@ const featuredStandards = standards.filter((standard) => ['zugferd', 'xrechnung'
       </div>
     </section>
 
+    <section class="section-editorial">
+      <div class="container-content">
+        <div class="editorial-block">
+          <h2 class="editorial-h2">E-invoicing compliance dashboard and compliance dashboard e-invoicing: what teams usually track</h2>
+          <p class="editorial-body">
+            Teams evaluating their e-invoicing compliance setup often need to track several dimensions at once — across countries, formats, and ERP systems. Key areas tracked on an e-invoicing compliance dashboard and compliance dashboard e-invoicing workflows include: <strong>mandate status</strong> by country and phase; <strong>invoice format</strong> required for each market (UBL 2.1, XRechnung, FatturaPA, Factur-X, Peppol BIS Billing 3.0); <strong>routing path</strong> and transmission route (Peppol Access Point, Direct API, Clearing House); <strong>ERP readiness</strong> — which ERP modules need configuration and what export format they support; <strong>provider route</strong> — which access points or intermediaries cover the target country pair; and <strong>validation and evidence</strong> — confirmation that invoices were accepted by the clearing system or network. Browse the country and standard dossiers below to explore each dimension for your specific situation.
+          </p>
+          <div class="editorial-links">
+            <a href="/countries" class="editorial-link">Browse country mandates</a>
+            <a href="/standards" class="editorial-link">Browse invoice formats</a>
+            <a href="/routes" class="editorial-link">Understand routing paths</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     {upcomingCountries.length > 0 && (
       <section class="section-upcoming">
         <div class="container-content">
@@ -233,4 +249,58 @@ const featuredStandards = standards.filter((standard) => ['zugferd', 'xrechnung'
   .standards-nav-card strong { font-size: var(--text-sm); }
   .standards-nav-card span { font-size: var(--text-xs); color: var(--color-slate-600); }
   .guide-paths { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+
+  .section-editorial {
+    padding: var(--space-4) 0;
+  }
+
+  .editorial-block {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .editorial-h2 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-slate-900);
+    letter-spacing: var(--tracking-tight);
+    margin: 0;
+  }
+
+  .editorial-body {
+    font-size: var(--text-sm);
+    color: var(--color-slate-600);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+
+  .editorial-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .editorial-link {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+  }
+
+  .editorial-link:hover {
+    border-bottom-color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .editorial-block {
+      padding: var(--space-5);
+    }
+  }
 </style>

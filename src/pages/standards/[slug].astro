@@ -152,6 +152,29 @@ const formatNote = standard.isPdfBased
 
     <QuickAnswerBox items={quickAnswers} />
 
+    {(standard as any).invoiceQueryGlossary?.length > 0 && (
+      <section class="content-section format-glossary-section">
+        <h2 class="section-h2">Peppol invoice format: BIS 3.0, EN 16931, and UBL explained</h2>
+        <p class="section-intro">
+          Search results for "Peppol format", "Peppol invoice", and "Peppol standard" often surface different terms — sometimes interchangeably. This table clarifies what each query phrase usually means and how it relates to the precise Peppol BIS Billing 3.0 specification.
+        </p>
+        <div class="glossary-table">
+          <div class="glossary-header">
+            <span>Query phrase</span>
+            <span>What users usually mean</span>
+            <span>More precise term</span>
+          </div>
+          {(standard as any).invoiceQueryGlossary.map((item: { query: string; whatItMeans: string; preciseTerm: string }) => (
+            <div class="glossary-row">
+              <span class="glossary-term">{item.query}</span>
+              <span class="glossary-colloquial">{item.whatItMeans}</span>
+              <span class="glossary-precise">{item.preciseTerm}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
     {(standard as any).sectionNearTop && (
       <section class="content-section section-near-top">
         <h2 class="section-h2">{(standard as any).sectionNearTop.heading}</h2>
@@ -163,29 +186,6 @@ const formatNote = standard.isPdfBased
             ))}
           </div>
         )}
-      </section>
-    )}
-
-    {(standard as any).formatGlossary?.length > 0 && (
-      <section class="content-section format-glossary-section">
-        <h2 class="section-h2">Peppol format: is it the same as Peppol BIS 3.0?</h2>
-        <p class="section-intro">
-          Search results for "Peppol format" and "Peppol invoice" often surface different terms — sometimes interchangeably. This table clarifies what each term means.
-        </p>
-        <div class="glossary-table">
-          <div class="glossary-header">
-            <span>Term</span>
-            <span>What users often mean</span>
-            <span>More precise meaning</span>
-          </div>
-          {(standard as any).formatGlossary.map((item: { term: string; colloquial: string; precise: string }) => (
-            <div class="glossary-row">
-              <span class="glossary-term">{item.term}</span>
-              <span class="glossary-colloquial">{item.colloquial}</span>
-              <span class="glossary-precise">{item.precise}</span>
-            </div>
-          ))}
-        </div>
       </section>
     )}
 

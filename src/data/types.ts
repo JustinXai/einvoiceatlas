@@ -100,6 +100,11 @@ export interface Country {
   // --- Dates & Meta ---
   lastReviewed: string;
   upcomingMilestones?: CountryMilestone[];
+  sectionNearTop?: {
+    heading: string;
+    body: string;
+    links?: { label: string; href: string }[];
+  };
 
   // --- Display-Only (no SEO schema — displayed as reference content) ---
   aiSummary: string;
@@ -165,6 +170,16 @@ export interface Standard {
   aliasBlock?: string;
   comparisonBlock?: string;
   howItConnects?: string[];
+  sectionNearTop?: {
+    heading: string;
+    body: string;
+    links?: { label: string; href: string }[];
+  };
+  invoiceQueryGlossary?: {
+    query: string;
+    whatItMeans: string;
+    preciseTerm: string;
+  }[];
 }
 
 // ---- ERP System ----

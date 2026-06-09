@@ -138,7 +138,16 @@ export const standards: Standard[] = [
       'Requires understanding of BT code taxonomy',
       'Validation can be strict — small errors cause rejections',
     ],
-    aliasBlock: 'Also searched as: EN16931, EN 16931 standard, EN 16931 invoice, EN 16931 e-invoice standard, European semantic invoice model.',
+    aliasBlock: 'Also searched as: EN16931, en16931, EN 16931, EN 16931 invoice, EN 16931 standard, EN 16931 e-invoice standard, European semantic invoice model, electronic invoice semantic model.',
+    sectionNearTop: {
+      heading: 'EN 16931 invoice standard: semantic model, CIUS, UBL, and CII',
+      body: 'EN 16931 defines the European semantic invoice model — it specifies what data an invoice must contain (the "what"), not how it is transmitted or what file format to use. It is not a delivery network or routing specification. Peppol BIS Billing 3.0, XRechnung, Factur-X, and ZUGFeRD each relate to EN 16931 differently: some implement its semantics over UBL XML (Peppol BIS), some over pure XML (XRechnung), and some embed EN 16931-conformant XML inside a PDF (Factur-X, ZUGFeRD). CIUS (Core Invoice Usage Specification) allows countries or sectors to constrain EN 16931 for specific contexts. UBL and CII are the two main XML syntaxes used to represent EN 16931 data.',
+      links: [
+        { label: 'Peppol BIS Billing 3.0', href: '/standards/peppol-bis-3/' },
+        { label: 'XRechnung Standard', href: '/standards/xrechnung/' },
+        { label: 'Factur-X / ZUGFeRD', href: '/standards/factur-x/' },
+      ],
+    },
     howItConnects: [
       'EN 16931 → European semantic invoice model — defines what data an invoice must contain',
       'Peppol BIS Billing 3.0 → Peppol network invoice specification built on UBL 2.1 with EN 16931 semantics',
@@ -159,15 +168,14 @@ export const standards: Standard[] = [
     version: '3.0',
     metaTitle: 'Peppol BIS 3.0: Invoice Format, Routing, and EN 16931',
     metaDescription: 'Peppol BIS Billing 3.0 invoice format guide: UBL Invoice structure, EN 16931 semantics, Peppol Access Point routing, XRechnung, Factur-X, and ZUGFeRD.',
-    formatGlossary: [
-      { term: 'Peppol format', colloquial: 'Peppol invoice format', precise: 'Usually means Peppol BIS Billing 3.0 — the structured invoice specification used on the Peppol Network.' },
-      { term: 'Peppol invoice', colloquial: 'Structured invoice exchanged through Peppol', precise: 'A UBL Invoice document sent via the Peppol Network using Peppol BIS Billing 3.0 rules.' },
-      { term: 'Peppol BIS 3.0', colloquial: 'Formal billing specification', precise: 'Peppol BIS Billing 3.0 — a CIUS (Core Invoice Usage Specification) built on UBL 2.1 and EN 16931.' },
-      { term: 'Peppol BIS Billing 3.0', colloquial: 'Peppol billing standard', precise: 'The OpenPeppol specification that defines invoice, credit note, and related document rules for Peppol exchange.' },
-      { term: 'EN 16931', colloquial: 'Semantic invoice data model', precise: 'The European semantic standard defining what data an invoice must contain — not a delivery network or file format.' },
-      { term: 'Peppol Access Point', colloquial: 'Routing provider', precise: 'The certified service that sends and receives Peppol documents through the Peppol Network.' },
+    invoiceQueryGlossary: [
+      { query: 'peppol format', whatItMeans: 'invoice format used in Peppol exchange', preciseTerm: 'Peppol BIS Billing 3.0' },
+      { query: 'peppol invoice', whatItMeans: 'structured invoice sent through Peppol', preciseTerm: 'UBL Invoice under Peppol BIS Billing 3.0' },
+      { query: 'peppol standard', whatItMeans: 'business and technical rules for Peppol exchange', preciseTerm: 'Peppol BIS Billing 3.0 / Peppol BIS' },
+      { query: 'peppol bis', whatItMeans: 'Peppol billing specification', preciseTerm: 'Peppol BIS Billing 3.0' },
+      { query: 'EN 16931', whatItMeans: 'semantic invoice data model', preciseTerm: 'European semantic model — foundation referenced by Peppol BIS Billing 3.0' },
     ],
-    aliasBlock: 'Also searched as: Peppol format, Peppol invoice format, Peppol BIS 3, Peppol BIS 3.0, Peppol BIS Billing 3.0, Peppol invoice specification.',
+    aliasBlock: 'Also searched as: Peppol format, Peppol invoice format, Peppol invoice, Peppol standard, Peppol standards, Peppol BIS, Peppol BIS 3, Peppol BIS 3.0, Peppol BIS Billing 3.0, Peppol invoice specification.',
     description:
       'Peppol BIS 3.0 is a set of structured document specifications built on UBL 2.1, implementing the EN 16931 semantic model. It is the format used on the Peppol Network — a global e-delivery infrastructure connecting businesses, governments, and ERP systems across 40+ countries.',
     countriesUsing: ['france', 'germany', 'belgium', 'netherlands', 'uk', 'australia', 'singapore'],
