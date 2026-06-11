@@ -31,7 +31,7 @@ const formattedDate = isValidDate
     <p class="banner-label">Upcoming Mandate �?{country}</p>
     <p class="banner-phase">{phase}</p>
     {formattedDate && <p class="banner-date">{formattedDate}</p>}
-    {!formattedDate && <p class="banner-date banner-date-tbd">Mandate timing under review</p>}
+    {!formattedDate && <p class="banner-date banner-date-pending">Mandate timing under review</p>}
   </div>
   <a href={`/countries/${slug ?? country.toLowerCase().replace(/ /g, '-')}`} class="banner-cta">
     View Requirements
@@ -104,7 +104,7 @@ const formattedDate = isValidDate
   .urgency-high .banner-date { color: var(--color-status-critical); }
   .urgency-medium .banner-date { color: var(--color-status-warning); }
 
-  .banner-date-tbd {
+  .banner-date-pending {
     font-style: italic;
     color: var(--color-slate-500);
     font-weight: 400;
