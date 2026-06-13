@@ -212,6 +212,47 @@ function label(name, url) {
   return `${name}`;
 }
 
+async function checkQALive(label, url, expectedCount) {
+  section(`Quick Answers — ${label} (production live)`);
+
+  const { status, text, ok } = await fetchUrl(`${url}?v=${BUST}`);
+
+  check(`HTTP 200`, status === 200, `HTTP 200 (${status})`, `Expected HTTP 200, got ${status}`);
+  if (status !== 200) return;
+
+  const qaMatch = text.match(/<div class="quick-answers"[^>]*>([\s\S]*?)<\/div>\s*<(section|div class="route-grid)/);
+  if (!qaMatch) {
+    fail(`${label}: Quick Answers block not found`);
+    return;
+  }
+  const qaBlock = qaMatch[1];
+  const itemRe = /<div class="qa-item"[^>]*>[\s\S]*?<span class="qa-number"[^>]*>([\s\S]*?)<\/span>([\s\S]*?)<\/dt>[\s\S]*?<dd[^>]*class="qa-answer"[^>]*>([\s\S]*?)<\/dd>/g;
+  const items = [];
+  let itemMatch;
+  while ((itemMatch = itemRe.exec(qaBlock)) !== null) {
+    const answerHtml = itemMatch[3];
+    const answerText = answerHtml.replace(/<[^>]+>/g, '').trim();
+    items.push({ number: itemMatch[1].trim(), question: itemMatch[2].trim(), answerText });
+  }
+
+  if (items.length !== expectedCount) {
+    fail(`${label}: Expected ${expectedCount} Q&A items, found ${items.length}`);
+  } else {
+    pass(`${label}: Q&A item count = ${expectedCount}`);
+  }
+
+  let emptyCount = 0;
+  for (const item of items) {
+    if (item.answerText.length === 0) {
+      emptyCount++;
+      fail(`${label}: Q${item.number} answer is empty — Q: "${item.question.slice(0, 60)}"`);
+    }
+  }
+  if (emptyCount === 0) {
+    pass(`${label}: All ${items.length} Q&A answers have visible text`);
+  }
+}
+
 // ── Main ───────────────────────────────────────────────────────
 async function main() {
   console.log('\n');
@@ -227,6 +268,9 @@ async function main() {
   await checkLlms();
   await checkHomepage();
   await checkFrance();
+  await checkQALive('Peppol BIS 3', `${BASE_URL}/standards/peppol-bis-3/`, 5);
+  await checkQALive('EN 16931', `${BASE_URL}/standards/en-16931/`, 5);
+  await checkQALive('Peppol Access Point', `${BASE_URL}/routes/peppol-access-point/`, 4);
 
   console.log(`\n${'═'.repeat(64)}`);
 

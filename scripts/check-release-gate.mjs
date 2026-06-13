@@ -206,6 +206,69 @@ function checkFrancePage() {
   }
 }
 
+// ── Quick Answers checks ───────────────────────────────────────
+
+/**
+ * Parses a quick-answers block in built HTML and verifies item counts + non-empty answers.
+ */
+function checkQuickAnswers(content, relPath, expectedCount, label) {
+  const qaMatch = content.match(/<div class="quick-answers"[^>]*>([\s\S]*?)<\/div>\s*<(section|div class="route-grid)/);
+  if (!qaMatch) {
+    fail(`${label}: Quick Answers block not found in ${relPath}`);
+    return;
+  }
+  const qaBlock = qaMatch[1];
+  const itemRe = /<div class="qa-item"[^>]*>[\s\S]*?<span class="qa-number"[^>]*>([\s\S]*?)<\/span>([\s\S]*?)<\/dt>[\s\S]*?<dd[^>]*class="qa-answer"[^>]*>([\s\S]*?)<\/dd>/g;
+  const items = [];
+  let itemMatch;
+  while ((itemMatch = itemRe.exec(qaBlock)) !== null) {
+    const number = itemMatch[1].trim();
+    const question = itemMatch[2].trim();
+    const answerHtml = itemMatch[3];
+    const answerText = answerHtml.replace(/<[^>]+>/g, '').trim();
+    items.push({ number, question, answerText });
+  }
+  if (items.length !== expectedCount) {
+    fail(`${label}: Expected ${expectedCount} Q&A items, found ${items.length} in ${relPath}`);
+  } else {
+    pass(`${label}: Q&A item count = ${expectedCount}`);
+  }
+  let emptyCount = 0;
+  for (const item of items) {
+    if (item.answerText.length === 0) {
+      emptyCount++;
+      fail(`${label}: Q${item.number} answer is empty — Q: "${item.question.slice(0, 60)}"`);
+    }
+  }
+  if (emptyCount === 0) {
+    pass(`${label}: All ${items.length} Q&A answers have visible text`);
+  }
+}
+
+function checkQuickAnswersAll() {
+  section('Quick Answers (target pages)');
+  const pages = [
+    { relPath: join('standards', 'peppol-bis-3', 'index.html'), label: 'Peppol BIS 3', expected: 5 },
+    { relPath: join('standards', 'en-16931', 'index.html'), label: 'EN 16931', expected: 5 },
+    { relPath: join('routes', 'peppol-access-point', 'index.html'), label: 'Peppol Access Point', expected: 4 },
+  ];
+  for (const { relPath, label, expected } of pages) {
+    const fullPath = join(dist, relPath);
+    if (!existsSync(fullPath)) {
+      fail(`${label}: file not found: ${relPath}`);
+      continue;
+    }
+    let content;
+    try {
+      content = readFileSync(fullPath, 'utf-8');
+    } catch {
+      fail(`${label}: could not read ${relPath}`);
+      continue;
+    }
+    checkQuickAnswers(content, relPath, expected, label);
+  }
+}
+
 // ── Main ───────────────────────────────────────────────────────
 function main() {
   console.log('\n');
@@ -225,6 +288,7 @@ function main() {
   checkLlms();
   checkHomepage();
   checkFrancePage();
+  checkQuickAnswersAll();
 
   console.log(`\n${'═'.repeat(64)}`);
 

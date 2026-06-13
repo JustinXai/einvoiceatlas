@@ -1,14 +1,22 @@
-Fix live date rendering and France mandate timeline
+fix: resolve Quick Answers blank rendering and add QA release gates
 
-- France: change status from mandatory to upcoming; update effectiveDate
-  to 2026-09-01; reset enforcement fields; correct mandatePhase to
-  phased rollout description; replace 2025 B2B enforcement milestones
-  with accurate 3-phase timeline (Sep 2026 receiving, Sep 2026/Sep 2027
-  issuing); update aiSummary to remove all 2025 enforcement claims;
-  fix Chorus Pro checklist item (remove January 2025 B2B claim)
-- France homepage banner: now shows "1 September 2026" (correct)
-- United Kingdom: DeadlineBanner already shows "Date to be confirmed"
-  (null date guard was already in place; no change needed)
-- Clearing house provider: update to accurately state that Italy SDI
-  is mandatory now while France B2B PDP requirement begins Sep 2026;
-  fix pros/cons to reflect accurate status for both countries
+Root causes:
+- Bug A: QuickAnswerBox used self-closing <dd set:html /> which Astro
+  silently drops in static build output
+- Bug B: [slug].astro pages mapped {question,answer} to {q,a} but
+  QuickAnswerBox props expect {question,answer}, causing all content
+  to be undefined
+
+Changes:
+- QuickAnswerBox: replace set:html with plain text interpolation
+- standards/[slug].astro, routes/[slug].astro: remove wrong .map()
+  transform; pass {question,answer} directly
+- check-release-gate.mjs: add checkQuickAnswers() parsing .qa-item
+  count, dt non-empty, dd visible-text non-empty per target page
+- check-live-production.mjs: same QA checks against live production
+- standards.ts: fix 3 overclaiming regulatory phrases to cautious
+  language (legally relevant vs compliant; Directive semantic model;
+  ERP ecosystem wording)
+
+Fixes QA item rendering for /standards/peppol-bis-3/ (5 items),
+/standards/en-16931/ (5 items), /routes/peppol-access-point/ (4 items).

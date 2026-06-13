@@ -17,7 +17,7 @@ const { items = [], title = 'Quick Answers' } = Astro.props;
           <span class="qa-number">{String(i + 1).padStart(2, '0')}</span>
           {item.question}
         </dt>
-        <dd class="qa-answer" set:html={item.answer} />
+        <dd class="qa-answer">{item.answer}</dd>
       </div>
     ))}
   </dl>

@@ -138,8 +138,8 @@ export const standards: Standard[] = [
     pros: [
       'EU-wide semantic interoperability',
       'Format-agnostic (works with XML, PDF, UBL)',
-      'Legally mandated by EU directive 2014/55/EU',
-      'Supported by all major ERP systems',
+      'Forms the European semantic standard referenced by Directive 2014/55/EU for electronic invoicing in public procurement',
+      'Supported through many ERP platforms, native modules, middleware products, and e-invoicing providers',
     ],
     cons: [
       'Complex with 52 mandatory fields',
@@ -262,7 +262,7 @@ export const standards: Standard[] = [
       ],
     },
     aiSummary:
-      'Peppol BIS 3.0 is the most widely adopted e-invoicing specification globally. It combines UBL 2.1 syntax with EN 16931 semantics, creating a format that is both technically structured and legally compliant across multiple jurisdictions. The Peppol Network provides the routing infrastructure — a "network of networks" that connects access points globally. To use Peppol, a business needs a Peppol ID (obtained via a Peppol Registration Authority) and an access point provider.',
+      'Peppol BIS 3.0 is the most widely adopted e-invoicing specification globally. It combines UBL 2.1 syntax with EN 16931 semantics, creating a format that is both technically structured and legally relevant across multiple jurisdictions. The Peppol Network provides the routing infrastructure — a "network of networks" that connects access points globally. To use Peppol, a business needs a Peppol ID (obtained via a Peppol Registration Authority) and an access point provider.',
     pros: [
       'Global coverage across 40+ countries',
       'Open standard with no vendor lock-in',

@@ -25,8 +25,8 @@ const breadcrumbItems = [
 
 const metaTitle = resolvedRoute.metaTitle ?? `${resolvedRoute.name} | EInvoiceAtlas`;
 const metaDescription = resolvedRoute.metaDescription ?? resolvedRoute.shortDescription;
-const quickAnswers = resolvedRoute.quickAnswer?.map((item) => ({ q: item.question, a: item.answer })) ?? [
-  { q: `What is ${resolvedRoute.name}?`, a: resolvedRoute.shortDescription },
+const quickAnswers = resolvedRoute.quickAnswer ?? [
+  { question: `What is ${resolvedRoute.name}?`, answer: resolvedRoute.shortDescription },
 ];
 ---
 

@@ -35,7 +35,7 @@ const supportingERPs = erpSystems.filter(e =>
 // Quick answers — use quickAnswer from data if available
 const rawQA = (standard as any).quickAnswer as { question: string; answer: string; order: number }[] | undefined;
 const quickAnswers = rawQA && rawQA.length > 0
-  ? rawQA.map(qa => ({ q: qa.question, a: qa.answer }))
+  ? rawQA
   : [
       {
         q: `What is ${standard.shortName}?`,
