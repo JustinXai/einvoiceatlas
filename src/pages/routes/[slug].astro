@@ -44,6 +44,20 @@ const quickAnswers = resolvedRoute.quickAnswer?.map((item) => ({ q: item.questio
 
     <QuickAnswerBox items={quickAnswers} />
 
+    {(resolvedRoute as any).sectionNearTop && (
+      <section class="content-section section-near-top">
+        <h2 class="section-h2">{(resolvedRoute as any).sectionNearTop.heading}</h2>
+        <p class="section-intro">{(resolvedRoute as any).sectionNearTop.body}</p>
+        {(resolvedRoute as any).sectionNearTop.links?.length > 0 && (
+          <div class="section-links">
+            {(resolvedRoute as any).sectionNearTop.links.map((link: { label: string; href: string }) => (
+              <a href={link.href} class="section-link-chip">{link.label}</a>
+            ))}
+          </div>
+        )}
+      </section>
+    )}
+
     <div class="route-grid">
       <main class="route-main">
         <section class="content-section">
@@ -60,6 +74,13 @@ const quickAnswers = resolvedRoute.quickAnswer?.map((item) => ({ q: item.questio
           <h2 class="section-h2">Peppol Access Point vs Peppol BIS Billing 3.0</h2>
           <p>{resolvedRoute.comparisonNote}</p>
         </section>
+
+        {(resolvedRoute as any).comparisonBlock && (
+          <section class="content-section">
+            <h2 class="section-h2">Format, Transport, and Semantic Layers</h2>
+            <p>{(resolvedRoute as any).comparisonBlock}</p>
+          </section>
+        )}
 
         <section class="content-section">
           <h2 class="section-h2">Provider selection checklist</h2>
@@ -132,4 +153,37 @@ const quickAnswers = resolvedRoute.quickAnswer?.map((item) => ({ q: item.questio
   .route-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--space-8); align-items: start; }
   .checklist-list, .related-list { padding-left: 1.25rem; }
   .cta-panel { position: sticky; top: 1.5rem; }
+
+  .section-near-top {
+    background: var(--color-accent-light);
+    border: 1px solid rgba(5, 96, 173, 0.15);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+  }
+
+  .section-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+
+  .section-link-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent);
+    background: var(--color-surface);
+    border: 1px solid rgba(5, 96, 173, 0.2);
+    border-radius: var(--radius-full);
+    padding: var(--space-1) var(--space-3);
+    text-decoration: none;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .section-link-chip:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent-hover);
+  }
 </style>

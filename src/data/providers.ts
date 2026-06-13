@@ -31,18 +31,23 @@ export const providerRoutes: ProviderRoute[] = [
     quickAnswer: [
       {
         question: 'What is a Peppol Access Point?',
-        answer: 'It is the certified route a business uses to send and receive Peppol invoices through the network.',
+        answer: 'A Peppol Access Point is a certified routing service that sends and receives Peppol documents — including Peppol BIS Billing 3.0 invoices — through the Peppol Network. Think of it as the postal service for e-invoices: your ERP sends an invoice to your Access Point, which routes it across the network to the recipient\'s Access Point, which delivers it to their system.',
         order: 1,
       },
       {
-        question: 'Is a Peppol Access Point the same as Peppol BIS Billing 3.0?',
-        answer: 'No. Peppol BIS Billing 3.0 is the invoice specification; the Access Point is the routing service.',
+        question: 'Do businesses need their own Access Point?',
+        answer: 'Not necessarily. Most businesses subscribe to a commercial Access Point provider rather than running their own. The provider handles connectivity, Peppol ID registration, validation, and delivery confirmation. A business needs its own Access Point only if it has the infrastructure and technical team to operate one and has received Peppol accreditation.',
         order: 2,
       },
       {
-        question: 'What should ERP teams check first?',
-        answer: 'Confirm ERP export support, Peppol invoice mapping, validation, and the provider selection checklist.',
+        question: 'What is the four-corner model in Peppol?',
+        answer: 'The Peppol four-corner model describes the flow: Corner 1 (sender ERP) generates a Peppol BIS 3.0 invoice; Corner 2 (sender Access Point) validates, signs, and sends it; Corner 3 (receiver Access Point) receives and validates it; Corner 4 (receiver ERP) processes the invoice. The two Access Points handle routing, signature verification, and transport — the sender and receiver ERP only interact with their respective Access Point.',
         order: 3,
+      },
+      {
+        question: 'What should ERP teams check first?',
+        answer: 'Confirm ERP export support for Peppol BIS Billing 3.0 (UBL 2.1 XML), Peppol invoice field mapping, and whether your ERP has native Peppol connectivity or needs middleware. Then assess Access Point provider options based on your country coverage, ERP integration method, and invoice volume.',
+        order: 4,
       },
     ],
     routeUseCase:
@@ -90,6 +95,17 @@ export const providerRoutes: ProviderRoute[] = [
       'Businesses needing a provider selection checklist',
     ],
     formatsCompatible: ['peppol-bis-3', 'ubl-2.1', 'xrechnung', 'en-16931'],
+    sectionNearTop: {
+      heading: 'Peppol Access Point: how it works, when you need one, and what to check before choosing a provider',
+      body: 'A Peppol Access Point is the routing layer that connects your invoice export to the Peppol Network. On its own, generating a Peppol BIS Billing 3.0 invoice from your ERP does not deliver it — you need an Access Point to transmit it to the network, validate it against Peppol rules, and route it to the recipient. The Access Point is the transport and routing layer; Peppol BIS Billing 3.0 is the invoice format that your ERP must generate. Before choosing an Access Point provider, confirm that your ERP can export valid UBL 2.1 XML invoices conforming to Peppol BIS Billing 3.0, and that the provider supports the countries and ERP systems in your operating model. Access Points do not replace EN 16931 compliance, UBL mapping, or your ERP export design — they handle connectivity, delivery receipts, and routing once the invoice is ready.',
+      links: [
+        { label: 'Peppol BIS Billing 3.0', href: '/standards/peppol-bis-3/' },
+        { label: 'EN 16931 Invoice Standard', href: '/standards/en-16931/' },
+        { label: 'Belgium E-Invoicing', href: '/countries/belgium-e-invoicing/' },
+        { label: 'France E-Invoicing', href: '/countries/france-e-invoicing/' },
+      ],
+    },
+    comparisonBlock: 'Comparing Peppol Access Point routing with other routes: Peppol BIS Billing 3.0 (format) vs Peppol Access Point (transport) vs EN 16931 (semantic model). The Access Point is the certified Peppol routing service — it carries the invoice across the Peppol network, not the format itself. Peppol BIS Billing 3.0 is what your ERP generates; the Access Point is how it reaches the Peppol network. EN 16931 is the data model that both Peppol BIS 3 and other formats reference — it defines what information must be in an invoice, not how it gets from A to B.',
     countriesApplicable: ['belgium', 'germany', 'france', 'netherlands', 'uk'],
     complexity: 'medium',
     costIndicators: 'Provider pricing depends on volume, onboarding scope, and ERP integration effort.',

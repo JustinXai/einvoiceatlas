@@ -119,10 +119,18 @@ export const standards: Standard[] = [
     // --- Navigational Relationships ---
     relatedCountries: ['france', 'germany', 'belgium', 'spain', 'italy', 'netherlands'],
     relatedStandardSlugs: ['peppol-bis-3', 'xrechnung', 'factur-x', 'ubl-2.1'],
+    invoiceQueryGlossary: [
+      { query: 'en16931 compliance', whatItMeans: 'whether an invoice meets EN 16931 data requirements', preciseTerm: 'EN 16931 data model — 52 mandatory data elements in a semantic invoice structure' },
+      { query: 'en 16931 xml', whatItMeans: 'XML representation of EN 16931 data', preciseTerm: 'UBL 2.1 or CII — XML syntaxes used to encode EN 16931 data (e.g. in XRechnung, Factur-X)' },
+      { query: 'en 16931 format', whatItMeans: 'the technical file format for EN 16931 invoices', preciseTerm: 'EN 16931 is a semantic model, not a format — XML (UBL/CII), PDF+XML, or other structured formats all represent EN 16931 data' },
+      { query: 'en 16931 example', whatItMeans: 'sample EN 16931 invoice structure', preciseTerm: 'XRechnung and Factur-X are concrete implementations showing EN 16931 field structure in XML' },
+    ],
     quickAnswer: [
       { question: 'Is EN 16931 a file format?', answer: 'No. EN 16931 is a semantic data model — it defines what data an invoice must contain. The actual format can be XML (as in XRechnung), PDF+XML (as in Factur-X), or UBL.', order: 1 },
       { question: 'Which countries require EN 16931?', answer: 'All EU countries implementing mandatory e-invoicing under the 2014/55/EU directive are required to accept invoices conforming to EN 16931.', order: 2 },
       { question: 'How does EN 16931 relate to Peppol?', answer: 'Peppol BIS 3.0 implements EN 16931 as its semantic model. All Peppol-compliant invoices are EN 16931 compliant.', order: 3 },
+      { question: 'How is EN 16931 different from Peppol BIS Billing 3.0?', answer: 'EN 16931 defines the semantic invoice data structure — what fields an invoice must contain. Peppol BIS Billing 3.0 takes EN 16931 and adds Peppol-specific XML rules (UBL 2.1), validation constraints, and network routing. Peppol BIS 3 is a more specific implementation of EN 16931.', order: 4 },
+      { question: 'What does EN 16931 compliance mean in practice?', answer: 'An invoice is EN 16931-compliant when it contains all mandatory data elements (the BT codes) with correct data types. Whether an invoice is "legal" depends on the country — EN 16931 defines the data model; local mandates define what formats and data are required.', order: 5 },
     ],
     // --- Display ---
     aiSummary:
@@ -237,10 +245,22 @@ export const standards: Standard[] = [
     relatedStandardSlugs: ['en-16931', 'ubl-2.1', 'xrechnung', 'factur-x'],
     lastReviewed: '2026-05-15',
     quickAnswer: [
-      { question: 'What is Peppol?', answer: 'Peppol is a network (like a mail system for business documents) that routes e-invoices between parties. Peppol BIS 3 is the invoice format used on Peppol.', order: 1 },
-      { question: 'Do I need to use Peppol to send a Peppol BIS 3 invoice?', answer: 'Technically no — Peppol BIS 3 is a UBL-based format that can be sent outside Peppol. But Peppol is the primary delivery mechanism and ensures routing, delivery confirmation, and interoperability.', order: 2 },
+      { question: 'What is Peppol BIS Billing 3.0?', answer: 'Peppol BIS Billing 3.0 is a set of structured document specifications built on UBL 2.1 XML, implementing the EN 16931 semantic model. It is the invoice format used on the Peppol Network — a global e-delivery infrastructure connecting businesses, governments, and ERP systems across 40+ countries.', order: 1 },
+      { question: 'Do I need to use Peppol to send a Peppol BIS 3 invoice?', answer: 'Technically no — Peppol BIS 3 is a UBL-based format that can be sent outside Peppol. But Peppol is the primary delivery mechanism and provides routing, delivery confirmation, and cross-border interoperability.', order: 2 },
       { question: 'How many countries support Peppol?', answer: 'Peppol has active presence in 40+ countries across Europe, Asia-Pacific, and the Americas. Coverage varies by country.', order: 3 },
+      { question: 'What is the difference between Peppol BIS 3.0 and EN 16931?', answer: 'EN 16931 defines the semantic invoice data model — what fields an invoice must contain. Peppol BIS Billing 3.0 implements EN 16931 as a UBL 2.1 XML specification with additional Peppol-specific validation rules. Think of EN 16931 as the dictionary and Peppol BIS 3 as a specific grammar book that follows it.', order: 4 },
+      { question: 'How is Peppol BIS 3.0 different from XRechnung or Factur-X?', answer: 'XRechnung (Germany) and Factur-X (France) are national format profiles that also implement EN 16931. Peppol BIS 3 is a network-focused specification used globally. They share the same EN 16931 data semantics but differ in XML structure, validation rules, and delivery mechanism. An invoice valid in one format is not automatically valid in another.', order: 5 },
     ],
+    sectionNearTop: {
+      heading: 'Peppol BIS Billing 3.0: what the format is, how it relates to EN 16931, and what ERP teams need to know',
+      body: 'Peppol BIS Billing 3.0 is the invoice specification used on the Peppol Network — a global e-delivery infrastructure connecting businesses, governments, and ERP systems across 40+ countries. The specification is published by OpenPeppol AS and combines two layers: the EN 16931 semantic model (what data an invoice must contain) and the UBL 2.1 XML syntax (how that data is structured and transmitted). To use Peppol BIS Billing 3.0, a business needs a Peppol ID (obtained through a Peppol Registration Authority) and a Peppol Access Point subscription. The format is particularly relevant for businesses operating across borders or sending to Peppol-connected government procurement systems. Key ERP integration considerations include exporting invoices as valid UBL 2.1 XML, mapping ERP fields to EN 16931 BT codes, and configuring Peppol Access Point routing. Peppol BIS Billing 3.0 is not itself a country mandate — it is a specification relevant where Peppol network exchange is used, and it is one of several EN 16931-based formats alongside XRechnung (Germany), Factur-X (France), and ZUGFeRD (Germany B2B).',
+      links: [
+        { label: 'EN 16931 Invoice Standard', href: '/standards/en-16931/' },
+        { label: 'Peppol Access Point Route', href: '/routes/peppol-access-point/' },
+        { label: 'XRechnung Standard', href: '/standards/xrechnung/' },
+        { label: 'Factur-X / ZUGFeRD', href: '/standards/factur-x/' },
+      ],
+    },
     aiSummary:
       'Peppol BIS 3.0 is the most widely adopted e-invoicing specification globally. It combines UBL 2.1 syntax with EN 16931 semantics, creating a format that is both technically structured and legally compliant across multiple jurisdictions. The Peppol Network provides the routing infrastructure — a "network of networks" that connects access points globally. To use Peppol, a business needs a Peppol ID (obtained via a Peppol Registration Authority) and an access point provider.',
     pros: [
