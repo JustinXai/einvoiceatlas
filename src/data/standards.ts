@@ -27,10 +27,10 @@ export const standards: Standard[] = [
     category: 'regional',
     governingBody: 'CEN (European Committee for Standardization)',
     version: '1.3.1 (2020)',
-    metaTitle: 'EN 16931 Invoice Standard and CIUS Guide',
-    metaDescription: 'Guide to EN 16931 and EN16931 invoice standards: semantic model, CIUS, UBL/CII syntax, Peppol BIS 3.0, XRechnung, and Factur-X links.',
+    metaTitle: 'EN 16931 Invoice Standard: XML, Examples & EU E-Invoicing',
+    metaDescription: 'Learn EN 16931, the EU e-invoicing standard: semantic model, XML structure, invoice examples, CIUS, UBL/CII syntax, Peppol BIS 3.0, XRechnung, and Factur-X links.',
     description:
-      'EN 16931 is the EU\'s semantic data model for electronic invoices. It defines what information an invoice must contain (the "what") but not how it is represented technically. It is the semantic foundation that XRechnung, Factur-X, and UBL 2.1 all implement.',
+      'EN 16931 is the EU\'s semantic data model for electronic invoices. It defines what information an invoice must contain (the "what") but not how it is represented technically. It is the semantic foundation that XRechnung, Factur-X, Peppol BIS 3.0, and UBL 2.1 all implement.',
     countriesUsing: ['france', 'germany', 'belgium', 'spain', 'italy', 'netherlands', 'austria'],
     erpSupport: ['sap', 'oracle', 'netsuite', 'odoo', 'sage', 'microsoft-dynamics'],
     mandatoryFields: 52,
@@ -148,8 +148,8 @@ export const standards: Standard[] = [
     ],
     aliasBlock: 'Also searched as: EN16931, en16931, EN 16931, EN 16931 invoice, EN 16931 standard, EN 16931 e-invoice standard, European semantic invoice model, electronic invoice semantic model.',
     sectionNearTop: {
-      heading: 'EN 16931 invoice standard: semantic model, CIUS, UBL, and CII',
-      body: 'EN 16931 defines the European semantic invoice model — it specifies what data an invoice must contain (the "what"), not how it is transmitted or what file format to use. It is not a delivery network or routing specification. Peppol BIS Billing 3.0, XRechnung, Factur-X, and ZUGFeRD each relate to EN 16931 differently: some implement its semantics over UBL XML (Peppol BIS), some over pure XML (XRechnung), and some embed EN 16931-conformant XML inside a PDF (Factur-X, ZUGFeRD). CIUS (Core Invoice Usage Specification) allows countries or sectors to constrain EN 16931 for specific contexts. UBL and CII are the two main XML syntaxes used to represent EN 16931 data.',
+      heading: 'EN 16931 invoice standard: semantic model, XML structure, examples, and CIUS',
+      body: 'EN 16931 defines the European semantic invoice model — it specifies what data an invoice must contain (the "what"), not how it is transmitted or what file format to use. It is not a delivery network or routing specification. Peppol BIS Billing 3.0, XRechnung, Factur-X, and ZUGFeRD each relate to EN 16931 differently: some implement its semantics over UBL XML (Peppol BIS), some over pure XML (XRechnung), and some embed EN 16931-conformant XML inside a PDF (Factur-X, ZUGFeRD). CIUS (Core Invoice Usage Specification) allows countries or sectors to constrain EN 16931 for specific contexts. UBL and CII are the two main XML syntaxes used to represent EN 16931 data, and the examples below show how the model appears in real invoice flows.',
       links: [
         { label: 'Peppol BIS Billing 3.0', href: '/standards/peppol-bis-3/' },
         { label: 'XRechnung Standard', href: '/standards/xrechnung/' },
@@ -174,8 +174,8 @@ export const standards: Standard[] = [
     category: 'universal',
     governingBody: 'OpenPeppol AS (non-profit)',
     version: '3.0',
-    metaTitle: 'Peppol BIS 3.0: Invoice Format, Routing, and EN 16931',
-    metaDescription: 'Peppol BIS Billing 3.0 invoice format guide: UBL Invoice structure, EN 16931 semantics, Peppol Access Point routing, XRechnung, Factur-X, and ZUGFeRD.',
+    metaTitle: 'Peppol BIS Billing 3.0: Format, XML & Examples',
+    metaDescription: 'Learn what Peppol BIS Billing 3.0 is, how it relates to EN 16931, its UBL XML structure, validation rules, invoice examples, and routing.',
     invoiceQueryGlossary: [
       { query: 'peppol format', whatItMeans: 'invoice format used in Peppol exchange', preciseTerm: 'Peppol BIS Billing 3.0' },
       { query: 'peppol invoice', whatItMeans: 'structured invoice sent through Peppol', preciseTerm: 'UBL Invoice under Peppol BIS Billing 3.0' },

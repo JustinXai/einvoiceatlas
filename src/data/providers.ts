@@ -22,9 +22,9 @@ export const providerRoutes: ProviderRoute[] = [
     slug: 'peppol-access-point',
     urlSlug: 'peppol-access-point',
     title: 'Peppol Access Point',
-    metaTitle: 'Peppol Access Point Provider Checklist',
+    metaTitle: 'Peppol Access Point: Providers, Certification & How It Works',
     metaDescription:
-      'Learn what a Peppol Access Point is, when you need one, and how to compare provider routing, ERP integration, EN 16931, and Peppol invoices.',
+      'Understand how a Peppol Access Point works, the four-corner model, provider selection, certification terminology, ERP integration, and cross-border coverage.',
     h1: 'Peppol Access Point',
     aiSummary:
       'A Peppol Access Point is the routing layer that sends and receives Peppol invoice traffic for your ERP or e-invoicing platform. Teams use it when they need a provider to exchange Peppol BIS Billing 3.0 documents, validate routing, and connect their invoice export flow to the Peppol network. The decision is about network access and transport, not about replacing the invoice format itself.',
